@@ -1,11 +1,10 @@
 # TP-Link Archer C7 V2 AC1750 Optimized LEDE Firmware
 
-Features
-===
-- Slim & optimized build for TP-Link Archer C7 V2 only based on latest trunk source
-- No config files have been added or modified
+## Features
+- Slim & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
+- No config files have been added or modified = default settings for services
 - LuCI SSL Web Interface
-- Improved ath10k CT drivers & firmware
+- Improved [ath10k CT](http://www.candelatech.com/ath10k-10.1.php) drivers & firmware
 - VPN client ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - QoS with SQM (cake & more)
 - Dynamic DNS support
@@ -18,7 +17,7 @@ Features
 - Supports boding, relays and bridges
 - vim, nano, tcpdump-mini, htop, ip, wget, curl, ethtool, dmesg, grep, tar & many more
 
-Changelog
-===
+## Changelog
 - 2017-02-04:
 -- Initial release
+
