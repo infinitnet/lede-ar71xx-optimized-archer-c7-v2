@@ -18,6 +18,8 @@
 - vim, nano, tcpdump-mini, htop, ip, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## Changelog
-- 2017-02-04:
--- Initial release
+- 2017-02-05
+-- Upstream updates
 
+- 2017-02-04
+-- Initial release
