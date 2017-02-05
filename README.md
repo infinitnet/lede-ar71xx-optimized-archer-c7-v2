@@ -19,7 +19,7 @@
 
 ## Changelog
 - 2017-02-05
-	- Upstream updates
+  - Upstream updates
 
 - 2017-02-04
-	- Initial release
+  - Initial release
