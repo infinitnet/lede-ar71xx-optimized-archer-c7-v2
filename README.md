@@ -3,6 +3,7 @@
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
 - No config files have been added or modified = default settings for services
+- Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and flags to maximize performance
 - LuCI SSL Web Interface
 - Improved [ath10k CT](http://www.candelatech.com/ath10k-10.1.php) drivers & firmware
 - VPN client ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
@@ -17,14 +18,15 @@
 - Supports bonding, relays and bridges
 - BCP38 anti spoofing
 - Advanced statistics (graphs)
-- vim, nano, tcpdump-mini, htop, rsync, ip, wget, curl, ethtool, dmesg, grep, tar & many more
+- vim, nano, tcpdump-mini, htop, rsync, iproute2, ipset, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## Changelog
 - 2017-02-06
   - Upstream updates
   - Added `rsync`
   - BCP38 added (including LuCI app)
-  - Compile everything with `-O3` and `-march=24kc`
+  - Compile everything with `-O3` and `-march=74kc`
+  - Use GCC 6.3
 
 - 2017-02-05
   - Upstream updates
