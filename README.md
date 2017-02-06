@@ -14,10 +14,14 @@
 - UPnP support
 - Supports common filesystems (btrfs, exfat, f2fs, ext4, msdos, ntfs, nfs, xfs, fuse, reiserfs, squashfs)
 - IPv4-over-IPv6
-- Supports boding, relays and bridges
-- vim, nano, tcpdump-mini, htop, ip, wget, curl, ethtool, dmesg, grep, tar & many more
+- Supports bonding, relays and bridges
+- vim, nano, tcpdump-mini, htop, rsync, ip, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## Changelog
+- 2017-02-06
+  - Upstream updates
+  - Added `rsync`
+
 - 2017-02-05
   - Upstream updates
 
