@@ -15,12 +15,16 @@
 - Supports common filesystems (btrfs, exfat, f2fs, ext4, msdos, ntfs, nfs, xfs, fuse, reiserfs, squashfs)
 - IPv4-over-IPv6
 - Supports bonding, relays and bridges
+- BCP38 anti spoofing
+- Advanced statistics (graphs)
 - vim, nano, tcpdump-mini, htop, rsync, ip, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## Changelog
 - 2017-02-06
   - Upstream updates
   - Added `rsync`
+  - BCP38 added (including LuCI app)
+  - Compile everything with `-O3` and `-march=24kc`
 
 - 2017-02-05
   - Upstream updates
