@@ -21,9 +21,13 @@
 - vim, nano, tcpdump-mini, htop, rsync, iproute2, ipset, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## FAQ
-**Q:** Can I block ads with this firmware?
+**Can I block ads with this firmware?**
 
-**A:** Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option resolver 'fvz-anyone'` to `option resolver 'default.ns1.adguard.com'`. Then restart DNSCrypt with `service dnscrypt-proxy restart`.
+Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option resolver 'fvz-anyone'` to `option resolver 'default.ns1.adguard.com'`. Then restart DNSCrypt with `service dnscrypt-proxy restart`.
+
+**Do you offer any quality assurance?**
+
+Sort of. I push updates manually after testing the builds on my own C7, which prevents major issues with the releases you can find here.
 
 ## Changelog
 - 2017-02-07
