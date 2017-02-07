@@ -2,11 +2,11 @@
 
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
-- No config files have been added or modified = default settings for services
 - Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and flags to maximize performance
 - LuCI SSL Web Interface
 - Improved [ath10k CT](http://www.candelatech.com/ath10k-10.1.php) drivers & firmware
-- VPN client ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
+- VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
+- DNSCrypt using OpenNIC for your security, privacy & freedom
 - QoS with SQM (cake & more)
 - Dynamic DNS support
 - WiFi Schedule (disable/enable WiFi at specific times)
@@ -20,7 +20,17 @@
 - Advanced statistics (graphs)
 - vim, nano, tcpdump-mini, htop, rsync, iproute2, ipset, wget, curl, ethtool, dmesg, grep, tar & many more
 
+## FAQ
+**Q:** Can I block ads with this firmware?
+**A:** Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option resolver 'fvz-anyone'` to `option resolver 'default.ns1.adguard.com'`. Then restart DNSCrypt with `service dnscrypt-proxy restart`.
+
 ## Changelog
+- 2017-02-07
+  - Upstream updates
+  - More gcc optimizations
+  - DNSCrypt added
+  - Added config to GitHub repo
+
 - 2017-02-06
   - Upstream updates
   - Added `rsync`
