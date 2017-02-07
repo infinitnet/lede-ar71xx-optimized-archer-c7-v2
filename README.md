@@ -22,6 +22,7 @@
 
 ## FAQ
 **Q:** Can I block ads with this firmware?
+
 **A:** Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option resolver 'fvz-anyone'` to `option resolver 'default.ns1.adguard.com'`. Then restart DNSCrypt with `service dnscrypt-proxy restart`.
 
 ## Changelog
