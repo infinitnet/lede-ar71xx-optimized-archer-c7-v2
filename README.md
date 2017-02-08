@@ -30,6 +30,8 @@ Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option r
 Sort of. I push updates manually after testing the builds on my own C7, which prevents major issues with the releases you can find here.
 
 ## Changelog
+- 2017-02-08
+  - Upstream updates
 - 2017-02-07
   - Upstream updates
   - More gcc optimizations
