@@ -32,6 +32,7 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
 ## Changelog
 - 2017-02-13
   - Upstream updates
+  - Minor bug fixes
 - 2017-02-09
   - Upstream updates
   - `openssl-util` added
