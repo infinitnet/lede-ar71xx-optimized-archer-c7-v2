@@ -32,6 +32,10 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
 ## Changelog
 - 2017-02-13
   - Upstream updates
+  - Replaced `wpad-mini` with `wpad`
+  - Added `hostapd-utils`
+- 2017-02-13
+  - Upstream updates
   - Minor bug fixes
 - 2017-02-09
   - Upstream updates
