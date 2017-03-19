@@ -46,8 +46,6 @@ CONFIG_PACKAGE_TAR_BZIP2=y
 CONFIG_PACKAGE_TAR_GZIP=y
 CONFIG_PACKAGE_TAR_XZ=y
 # CONFIG_PACKAGE_ar3k-firmware is not set
-# CONFIG_PACKAGE_ath10k-firmware-qca988x is not set
-CONFIG_PACKAGE_ath10k-firmware-qca988x-ct=y
 # CONFIG_PACKAGE_ath9k-htc-firmware is not set
 # CONFIG_PACKAGE_b43legacy-firmware is not set
 CONFIG_PACKAGE_bcp38=y
@@ -116,8 +114,7 @@ CONFIG_PACKAGE_kmod-ata-piix=y
 CONFIG_PACKAGE_kmod-ata-sil=y
 CONFIG_PACKAGE_kmod-ata-sil24=y
 CONFIG_PACKAGE_kmod-ata-via-sata=y
-# CONFIG_PACKAGE_kmod-ath10k is not set
-CONFIG_PACKAGE_kmod-ath10k-ct=y
+# CONFIG_PACKAGE_kmod-ath10k-ct is not set
 # CONFIG_PACKAGE_kmod-ath3k is not set
 # CONFIG_PACKAGE_kmod-ath5k is not set
 # CONFIG_PACKAGE_kmod-ath9k-htc is not set
@@ -679,6 +676,7 @@ CONFIG_RSYNC_zlib=y
 CONFIG_TARGET_ARCH_PACKAGES="mips_74kc"
 CONFIG_TARGET_OPTIMIZATION="-O3 -pipe -mno-branch-likely -mips32r2 -march=74kc -mdspr2"
 CONFIG_TARGET_OPTIONS=y
+# CONFIG_USE_MIPS16 is not set
 CONFIG_WPA_RFKILL_SUPPORT=y
 CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK=y
 CONFIG_WPA_SUPPLICANT_OPENSSL=y

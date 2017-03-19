@@ -1,6 +1,6 @@
 6in4 - 24-1
 6to4 - 12-2
-ath10k-firmware-qca988x-ct - 2017-01-11-ab432c60-1
+ath10k-firmware-qca988x - 2017-01-11-ab432c60-1
 base-files - 172-r3778-312b9dcd65
 bcp38 - 5-2
 block-mount - 2017-03-06-98bbb5a0-1
@@ -65,7 +65,7 @@ kmod-ata-sil - 4.4.53-1
 kmod-ata-sil24 - 4.4.53-1
 kmod-ata-via-sata - 4.4.53-1
 kmod-ath - 4.4.53+2017-01-31-1
-kmod-ath10k-ct - 4.4.53+2017-01-26-d2bc84ff-1
+kmod-ath10k - 4.4.53+2017-01-31-1
 kmod-ath9k - 4.4.53+2017-01-31-1
 kmod-ath9k-common - 4.4.53+2017-01-31-1
 kmod-atm - 4.4.53-1

@@ -40,6 +40,8 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
   - ca-certificates added
   - LuCI simple-adblock added
   - Possible performance improvements
+  - MIPS16 instructions removed
+  - Switched from ath10k-ct to vanilla ath10k
 - 2017-03-01
   - Upstream updates
 - 2017-02-22
