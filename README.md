@@ -4,7 +4,6 @@
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
 - Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and flags to maximize performance
 - LuCI SSL Web Interface
-- Improved [ath10k CT](http://www.candelatech.com/ath10k-10.1.php) drivers & firmware
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - TOR ready
 - DNSCrypt using OpenNIC for your security, privacy & freedom
@@ -42,6 +41,8 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
   - Possible performance improvements
   - MIPS16 instructions removed
   - Switched from ath10k-ct to vanilla ath10k
+  - Dynamic kernel modules rather than built-in
+  - Tweaked kernel config
 - 2017-03-01
   - Upstream updates
 - 2017-02-22
