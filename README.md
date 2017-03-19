@@ -41,7 +41,6 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
   - Possible performance improvements
   - MIPS16 instructions removed
   - Switched from ath10k-ct to vanilla ath10k
-  - Dynamic kernel modules rather than built-in
   - Tweaked kernel config
 - 2017-03-01
   - Upstream updates
