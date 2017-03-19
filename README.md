@@ -6,8 +6,10 @@
 - LuCI SSL Web Interface
 - Improved [ath10k CT](http://www.candelatech.com/ath10k-10.1.php) drivers & firmware
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
+- TOR ready
 - DNSCrypt using OpenNIC for your security, privacy & freedom
 - QoS with SQM (cake & more)
+- Simple Adblock available in LuCI
 - Dynamic DNS support
 - WiFi Schedule (disable/enable WiFi at specific times)
 - HD Idle (spins down connected hard drives when idle)
@@ -30,6 +32,14 @@ Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option r
 Sort of. I push updates manually after testing the builds on my own C7, which prevents major issues with the releases you can find here.
 
 ## Changelog
+- 2017-03-19
+  - Upstream updates
+  - LuCI Material theme added
+  - TOR support added
+  - rfkill support added
+  - ca-certificates added
+  - LuCI simple-adblock added
+  - Possible performance improvements
 - 2017-03-01
   - Upstream updates
 - 2017-02-22

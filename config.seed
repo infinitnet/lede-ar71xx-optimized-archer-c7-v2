@@ -55,6 +55,7 @@ CONFIG_PACKAGE_block-mount=y
 # CONFIG_PACKAGE_bnx2-firmware is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-usb is not set
 CONFIG_PACKAGE_bzip2=y
+CONFIG_PACKAGE_ca-certificates=y
 # CONFIG_PACKAGE_carl9170-firmware is not set
 # CONFIG_PACKAGE_chat is not set
 CONFIG_PACKAGE_collectd=y
@@ -364,7 +365,6 @@ CONFIG_PACKAGE_kmod-loop=y
 # CONFIG_PACKAGE_kmod-md-mod is not set
 # CONFIG_PACKAGE_kmod-mii is not set
 # CONFIG_PACKAGE_kmod-misdn is not set
-# CONFIG_PACKAGE_kmod-mmc is not set
 # CONFIG_PACKAGE_kmod-mmc-spi is not set
 # CONFIG_PACKAGE_kmod-mpls is not set
 # CONFIG_PACKAGE_kmod-mppe is not set
@@ -585,6 +585,7 @@ CONFIG_PACKAGE_luci-app-hd-idle=y
 CONFIG_PACKAGE_luci-app-ntpc=y
 CONFIG_PACKAGE_luci-app-openvpn=y
 CONFIG_PACKAGE_luci-app-siitwizard=y
+CONFIG_PACKAGE_luci-app-simple-adblock=y
 CONFIG_PACKAGE_luci-app-sqm=y
 CONFIG_PACKAGE_luci-app-statistics=y
 CONFIG_PACKAGE_luci-app-upnp=y
@@ -601,9 +602,9 @@ CONFIG_PACKAGE_luci-proto-ppp=y
 CONFIG_PACKAGE_luci-proto-relay=y
 CONFIG_PACKAGE_luci-ssl=y
 CONFIG_PACKAGE_luci-theme-bootstrap=y
+CONFIG_PACKAGE_luci-theme-material=y
 CONFIG_PACKAGE_miniupnpd=y
 CONFIG_PACKAGE_mount-utils=y
-CONFIG_PACKAGE_mountd=y
 # CONFIG_PACKAGE_mt7601u-firmware is not set
 # CONFIG_PACKAGE_mwifiex-pcie-firmware is not set
 # CONFIG_PACKAGE_mwl8k-firmware is not set
@@ -634,6 +635,7 @@ CONFIG_PACKAGE_rsync=y
 # CONFIG_PACKAGE_rtl8192de-firmware is not set
 # CONFIG_PACKAGE_rtl8192se-firmware is not set
 # CONFIG_PACKAGE_rtl8192su-firmware is not set
+CONFIG_PACKAGE_simple-adblock=y
 # CONFIG_PACKAGE_snapshot-tool is not set
 CONFIG_PACKAGE_sqm-scripts=y
 CONFIG_PACKAGE_sqm-scripts-extra=y
@@ -641,6 +643,7 @@ CONFIG_PACKAGE_tar=y
 CONFIG_PACKAGE_tc=y
 CONFIG_PACKAGE_tcpdump-mini=y
 CONFIG_PACKAGE_terminfo=y
+CONFIG_PACKAGE_tor=y
 CONFIG_PACKAGE_uhttpd=y
 CONFIG_PACKAGE_uhttpd-mod-ubus=y
 # CONFIG_PACKAGE_umbim is not set
@@ -676,7 +679,9 @@ CONFIG_RSYNC_zlib=y
 CONFIG_TARGET_ARCH_PACKAGES="mips_74kc"
 CONFIG_TARGET_OPTIMIZATION="-O3 -pipe -mno-branch-likely -mips32r2 -march=74kc -mdspr2"
 CONFIG_TARGET_OPTIONS=y
-CONFIG_WPA_SUPPLICANT_INTERNAL=y
+CONFIG_WPA_RFKILL_SUPPORT=y
+CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK=y
+CONFIG_WPA_SUPPLICANT_OPENSSL=y
 CONFIG_CPU_TYPE="74kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-O3 -pipe -mno-branch-likely -march=74kc -mdspr2"
 CONFIG_TARGET_ARCH_PACKAGES="mips_74kc"
