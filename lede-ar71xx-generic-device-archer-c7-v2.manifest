@@ -2,7 +2,6 @@
 6in4 - 24-1
 6rd - 9-2
 6to4 - 12-2
-adblock - 2.5.0-2
 aiccu - 20070115-16
 ath10k-firmware-qca988x - 2017-03-13-2209b0f8-1
 base-files - 172-r3901-15ca327954
@@ -56,7 +55,7 @@ iw - 4.9-1
 iwinfo - 2016-09-21-fd9e17be-1
 jshn - 2017-02-24-96305a3c-1
 jsonfilter - 2016-07-02-dea067ad-1
-kernel - 4.4.56-1-db313c706c1231c3a41010d8c43ccb76
+kernel - 4.4.56-1-b52b2077ae21fc33d069954af2fbd67b
 kmod-aoe - 4.4.56-1
 kmod-arptables - 4.4.56-1
 kmod-ata-ahci - 4.4.56-1
@@ -85,6 +84,7 @@ kmod-crypto-crc32c - 4.4.56-1
 kmod-crypto-ctr - 4.4.56-1
 kmod-crypto-deflate - 4.4.56-1
 kmod-crypto-des - 4.4.56-1
+kmod-crypto-ecb - 4.4.56-1
 kmod-crypto-echainiv - 4.4.56-1
 kmod-crypto-gcm - 4.4.56-1
 kmod-crypto-gf128 - 4.4.56-1
@@ -155,6 +155,7 @@ kmod-lib-zlib-deflate - 4.4.56-1
 kmod-lib-zlib-inflate - 4.4.56-1
 kmod-loop - 4.4.56-1
 kmod-mac80211 - 4.4.56+2017-01-31-1
+kmod-mppe - 4.4.56-1
 kmod-nat46 - 4.4.56+8-1
 kmod-nbd - 4.4.56-1
 kmod-nf-conntrack - 4.4.56-1
@@ -248,7 +249,6 @@ logrotate - 3.10.0-2
 lsof - 4.89-1
 lua - 5.1.5-1
 luci - git-17.090.47373-d4816ded6-1
-luci-app-adblock - git-17.090.47373-d4816ded6-1
 luci-app-bcp38 - git-17.090.47373-d4816ded6-1
 luci-app-ddns - 2.4.8-1
 luci-app-firewall - git-17.090.47373-d4816ded6-1
@@ -290,6 +290,8 @@ openvpn-openssl - 2.4.0-4
 opkg - 2017-03-15-cfe46c7d-1
 ppp - 2.4.7-11
 ppp-mod-pppoe - 2.4.7-11
+ppp-mod-pptp - 2.4.7-11
+pppossh - 2
 procd - 2017-03-05-8f218f56-1
 px5g-mbedtls - 4
 relayd - 2016-02-07-ad0b25ad-2
