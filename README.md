@@ -2,7 +2,7 @@
 
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
-- Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and flags to maximize performance
+- Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and various patches to maximize performance
 - LuCI SSL Web Interface
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - TOR ready
@@ -19,6 +19,7 @@
 - Supports bonding, relays and bridges
 - BCP38 anti spoofing
 - Advanced statistics (graphs)
+- MWAN3
 - vim, nano, tcpdump-mini, htop, rsync, iproute2, ipset, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## FAQ
@@ -31,6 +32,14 @@ Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option r
 Sort of. I push updates manually after testing the builds on my own C7, which prevents major issues with the releases you can find here.
 
 ## Changelog
+- 2017-04-01
+  - MWAN3 added
+  - pppossh added
+  - openssh-sftp-server added
+  - Many netfilter modules removed to increase throughput
+  - Kernel settings fine-tuned (sysctl)
+  - Many of [gwlim's patches](https://github.com/gwlim/mips74k-ar71xx-lede-patch) cherry picked & ported
+  - Many minor changes aimed at improving performance
 - 2017-03-19
   - Upstream updates
   - LuCI Material theme added
