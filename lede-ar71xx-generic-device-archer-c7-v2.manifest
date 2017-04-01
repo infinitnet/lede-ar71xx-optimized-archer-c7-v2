@@ -41,7 +41,6 @@ hd-idle - 1.04-2
 hostapd-common - 2016-12-19-ad02e79d-2
 hostapd-utils - 2016-12-19-ad02e79d-2
 htop - 2.0.2-1
-igmpproxy - 0.1-9
 ip-bridge - 4.4.0-9
 ip-full - 4.4.0-9
 ip6tables - 1.4.21-2
@@ -253,7 +252,6 @@ luci-app-bcp38 - git-17.090.47373-d4816ded6-1
 luci-app-ddns - 2.4.8-1
 luci-app-firewall - git-17.090.47373-d4816ded6-1
 luci-app-hd-idle - git-17.090.47373-d4816ded6-1
-luci-app-mwan3 - git-17.090.47373-d4816ded6-1
 luci-app-ntpc - git-17.090.47373-d4816ded6-1
 luci-app-openvpn - git-17.090.47373-d4816ded6-1
 luci-app-siitwizard - git-17.090.47373-d4816ded6-1
@@ -278,7 +276,6 @@ luci-theme-material - git-17.090.47373-d4816ded6-1
 miniupnpd - 2.0.20161216-1
 mount-utils - 2.29.2-1
 mtd - 21
-mwan3 - 2.4-5
 nano - 2.7.5-1
 netifd - 2017-03-21-a0321666-1
 ntpclient - 2010_365-1

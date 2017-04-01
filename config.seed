@@ -96,7 +96,6 @@ CONFIG_PACKAGE_grev6=y
 CONFIG_PACKAGE_hd-idle=y
 CONFIG_PACKAGE_hostapd-utils=y
 CONFIG_PACKAGE_htop=y
-CONFIG_PACKAGE_igmpproxy=y
 CONFIG_PACKAGE_ip-bridge=y
 CONFIG_PACKAGE_ip-full=y
 CONFIG_PACKAGE_ipip=y
@@ -603,7 +602,6 @@ CONFIG_PACKAGE_luci-app-bcp38=y
 CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-hd-idle=y
-CONFIG_PACKAGE_luci-app-mwan3=y
 CONFIG_PACKAGE_luci-app-ntpc=y
 CONFIG_PACKAGE_luci-app-openvpn=y
 CONFIG_PACKAGE_luci-app-siitwizard=y
@@ -628,7 +626,6 @@ CONFIG_PACKAGE_luci-theme-material=y
 CONFIG_PACKAGE_miniupnpd=y
 CONFIG_PACKAGE_mount-utils=y
 # CONFIG_PACKAGE_mt7601u-firmware is not set
-CONFIG_PACKAGE_mwan3=y
 # CONFIG_PACKAGE_mwifiex-pcie-firmware is not set
 # CONFIG_PACKAGE_mwl8k-firmware is not set
 CONFIG_PACKAGE_nano=y

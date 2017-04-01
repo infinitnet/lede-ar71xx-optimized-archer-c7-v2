@@ -19,7 +19,6 @@
 - Supports bonding, relays and bridges
 - BCP38 anti spoofing
 - Advanced statistics (graphs)
-- MWAN3
 - vim, nano, tcpdump-mini, htop, rsync, iproute2, ipset, wget, curl, ethtool, dmesg, grep, tar & many more
 
 ## FAQ
@@ -33,7 +32,7 @@ Sort of. I push updates manually after testing the builds on my own C7, which pr
 
 ## Changelog
 - 2017-04-01
-  - MWAN3 added
+  - **Important:** If your clients don't get an internet connection after upgrade, please remove option `mtu_fix 1` in `/etc/config/firewall`
   - pppossh added
   - openssh-sftp-server added
   - Many netfilter modules removed to increase throughput
