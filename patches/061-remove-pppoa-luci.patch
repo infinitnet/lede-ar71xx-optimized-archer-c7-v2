@@ -1,0 +1,40 @@
+--- a/feeds/luci/protocols/luci-proto-ppp/luasrc/model/network/proto_ppp.lua
++++ b/feeds/luci/protocols/luci-proto-ppp/luasrc/model/network/proto_ppp.lua
+@@ -4,7 +4,7 @@
+ local netmod = luci.model.network
+ 
+ local _, p
+-for _, p in ipairs({"ppp", "pptp", "pppoe", "pppoa", "3g", "l2tp", "pppossh"}) do
++for _, p in ipairs({"ppp", "pptp", "pppoe", "3g", "l2tp", "pppossh"}) do
+ 
+ 	local proto = netmod:register_protocol(p)
+ 
+@@ -17,8 +17,6 @@ for _, p in ipairs({"ppp", "pptp", "pppo
+ 			return luci.i18n.translate("UMTS/GPRS/EV-DO")
+ 		elseif p == "pppoe" then
+ 			return luci.i18n.translate("PPPoE")
+-		elseif p == "pppoa" then
+-			return luci.i18n.translate("PPPoATM")
+ 		elseif p == "l2tp" then
+ 			return luci.i18n.translate("L2TP")
+ 		elseif p == "pppossh" then
+@@ -39,8 +37,6 @@ for _, p in ipairs({"ppp", "pptp", "pppo
+ 			return "ppp-mod-pptp"
+ 		elseif p == "pppoe" then
+ 			return "ppp-mod-pppoe"
+-		elseif p == "pppoa" then
+-			return "ppp-mod-pppoa"
+ 		elseif p == "l2tp" then
+ 			return "xl2tpd"
+ 		elseif p == "pppossh" then
+@@ -49,9 +45,7 @@ for _, p in ipairs({"ppp", "pptp", "pppo
+ 	end
+ 
+ 	function proto.is_installed(self)
+-		if p == "pppoa" then
+-			return (nixio.fs.glob("/usr/lib/pppd/*/pppoatm.so")() ~= nil)
+-		elseif p == "pppoe" then
++		if p == "pppoe" then
+ 			return (nixio.fs.glob("/usr/lib/pppd/*/rp-pppoe.so")() ~= nil)
+ 		elseif p == "pptp" then
+ 			return (nixio.fs.glob("/usr/lib/pppd/*/pptp.so")() ~= nil)

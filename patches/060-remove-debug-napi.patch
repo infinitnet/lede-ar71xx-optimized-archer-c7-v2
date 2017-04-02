@@ -1,0 +1,55 @@
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -1084,7 +1084,7 @@ static int ag71xx_poll(struct napi_struc
+ //	DBG("%s: processing RX ring\n", dev->name);
+ 	int rx_done = ag71xx_rx_packets(ag, limit);
+ 
+-	ag71xx_debugfs_update_napi_stats(ag, rx_done, tx_done);
++//	ag71xx_debugfs_update_napi_stats(ag, rx_done, tx_done);
+ 
+ 	rx_ring = &ag->rx_ring;
+ 	if (rx_ring->buf[rx_ring->dirty % rx_ring->size].rx_buf == NULL)
+@@ -1163,7 +1163,7 @@ static irqreturn_t ag71xx_interrupt(int
+ 		napi_schedule(&ag->napi);
+ 	}
+ 
+-	ag71xx_debugfs_update_int_stats(ag, status);
++//	ag71xx_debugfs_update_int_stats(ag, status);
+ 
+ 	return IRQ_HANDLED;
+ }
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -936,7 +936,7 @@ static int ag71xx_tx_packets(struct ag71
+ 
+ //	DBG("%s: processing TX ring\n", ag->dev->name);
+ 
+-	while (ring->dirty + n != ring->curr) {
++	while (ring->curr != ring->dirty + n) {
+ 		unsigned int i = (ring->dirty + n) & ring_mask;
+ 		struct ag71xx_desc *desc = ag71xx_ring_desc(ring, i);
+ 		struct sk_buff *skb = ring->buf[i].skb;
+@@ -1007,7 +1007,7 @@ static int ag71xx_rx_packets(struct ag71
+ 		if (ag71xx_desc_empty(desc))
+ 			break;
+ 
+-		if ((ring->dirty + ring_size) == ring->curr) {
++		if (ring->curr == (ring->dirty + ring_size)) {
+ 			ag71xx_assert(0);
+ 			break;
+ 		}
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_ar8216.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_ar8216.c
+index 7ec43b7..3ceaf54 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_ar8216.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_ar8216.c
+@@ -28,10 +28,7 @@ void ag71xx_add_ar8216_header(struct ag71xx *ag, struct sk_buff *skb)
+ int ag71xx_remove_ar8216_header(struct ag71xx *ag, struct sk_buff *skb,
+ 				int pktlen)
+ {
+-	u8 type;
+-
+-	type = skb->data[1] & AR8216_PACKET_TYPE_MASK;
+-	switch (type) {
++	switch (skb->data[1] & AR8216_PACKET_TYPE_MASK) {
+ 	case AR8216_PACKET_TYPE_NORMAL:
+ 		break;

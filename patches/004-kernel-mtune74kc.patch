@@ -1,0 +1,18 @@
+diff --git a/target/linux/ar71xx/patches-4.4/221-kernel-mtune-74kc.patch b/target/linux/ar71xx/patches-4.4/221-kernel-mtune-74kc.patch
+index e69de29bb2..a3bfefdc0e 100644
+--- a/target/linux/ar71xx/patches-4.4/221-kernel-mtune-74kc.patch
++++ b/target/linux/ar71xx/patches-4.4/221-kernel-mtune-74kc.patch
+@@ -0,0 +1,13 @@
++--- a/arch/mips/Makefile
+++++ b/arch/mips/Makefile
++@@ -145,8 +145,8 @@ cflags-$(CONFIG_CPU_R4X00)	+= -march=r46
++ cflags-$(CONFIG_CPU_TX49XX)	+= -march=r4600 -Wa,--trap
++ cflags-$(CONFIG_CPU_MIPS32_R1)	+= $(call cc-option,-march=mips32,-mips32 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
++ 			-Wa,-mips32 -Wa,--trap
++-cflags-$(CONFIG_CPU_MIPS32_R2)	+= $(call cc-option,-march=mips32r2 -mtune=34kc,-mips32r2 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
++-			-Wa,-mips32r2 -Wa,--trap
+++cflags-$(CONFIG_CPU_MIPS32_R2)	+= $(call cc-option,-march=74kc -mno-dspr2 -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt,-march=74kc -mno-dspr2 -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS32) \
+++			-Wa,-march=74kc -mno-dspr2 -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt -Wa,--trap
++ cflags-$(CONFIG_CPU_MIPS32_R6)	+= -march=mips32r6 -Wa,--trap
++ cflags-$(CONFIG_CPU_MIPS64_R1)	+= $(call cc-option,-march=mips64,-mips64 -U_MIPS_ISA -D_MIPS_ISA=_MIPS_ISA_MIPS64) \
++ 			-Wa,-mips64 -Wa,--trap

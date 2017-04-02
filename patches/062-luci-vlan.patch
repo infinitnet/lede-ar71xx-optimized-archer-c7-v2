@@ -1,0 +1,55 @@
+--- a/feeds/luci/modules/luci-mod-admin-full/luasrc/model/cbi/admin_network/vlan.lua
++++ b/feeds/luci/modules/luci-mod-admin-full/luasrc/model/cbi/admin_network/vlan.lua
+@@ -19,6 +19,7 @@ m.uci:foreach("network", "switch",
+ 		local has_vlan    = nil
+ 		local has_learn   = nil
+ 		local has_vlan4k  = nil
++		local has_qos     = nil
+ 		local has_jumbo3  = nil
+ 		local has_mirror  = nil
+ 		local min_vid     = 0
+@@ -73,6 +74,9 @@ m.uci:foreach("network", "switch",
+ 				elseif line:match(": enable_vlan4k") then
+ 					enable_vlan4k = true
+ 
++				elseif line:match(": enable_qos") then
++					has_qos = "enable_qos"
++
+ 				elseif line:match(": enable_vlan") then
+ 					has_vlan = "enable_vlan"
+ 
+@@ -107,16 +111,23 @@ m.uci:foreach("network", "switch",
+ 			x.default = x.enabled
+ 		end
+ 
++		if has_qos then
++		  	s:option(Flag, has_qos, translate("Enable QoS"))
++		end
++
+ 		if has_jumbo3 then
+-			x = s:option(Flag, has_jumbo3, translate("Enable Jumbo Frame passthrough"))
+-			x.enabled = "3"
+-			x.rmempty = true
++			x = s:option(ListValue, has_jumbo3, translate("Enable Jumbo Frame passthrough"))
++			x:value("0", "1522")
++			x:value("1", "1536")
++			x:value("2", "1552")
++			x:value("3", "9216")
+ 		end
+ 
+ 		-- Does this switch support port mirroring?
+ 		if has_mirror then
+ 			s:option(Flag, "enable_mirror_rx", translate("Enable mirroring of incoming packets"))
+ 			s:option(Flag, "enable_mirror_tx", translate("Enable mirroring of outgoing packets"))
++			s:option(Flag, "enable_mirror_pause_frames", translate("Enable mirroring of incoming pause frames"))
+ 
+ 			local sp = s:option(ListValue, "mirror_source_port", translate("Mirror source port"))
+ 			local mp = s:option(ListValue, "mirror_monitor_port", translate("Mirror monitor port"))
+@@ -132,6 +143,7 @@ m.uci:foreach("network", "switch",
+ 				sp:value(pt.num, pt.label)
+ 				mp:value(pt.num, pt.label)
+ 			end
++			s:option(Flag, "enable_monitor_isolation", translate("Enable monitor isolation"),translate("This prevents forwarding of packets sent to the mirror port"))
+ 		end
+ 
+ 		-- VLAN table

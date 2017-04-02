@@ -1,0 +1,22 @@
+diff --git a/target/linux/ar71xx/Makefile b/target/linux/ar71xx/Makefile
+index 3f5bc67243..e17760b991 100644
+--- a/target/linux/ar71xx/Makefile
++++ b/target/linux/ar71xx/Makefile
+@@ -10,7 +10,8 @@ ARCH:=mips
+ BOARD:=ar71xx
+ BOARDNAME:=Atheros AR7xxx/AR9xxx
+ FEATURES:=usbgadget
+-CPU_TYPE:=24kc
++CPU_TYPE:=74kc
++CPU_SUBTYPE:=dsp2
+ SUBTARGETS:=generic nand mikrotik
+ 
+ KERNEL_PATCHVER:=4.4
+@@ -19,6 +20,6 @@ include $(INCLUDE_DIR)/target.mk
+ 
+ DEFAULT_PACKAGES += \
+ 	kmod-gpio-button-hotplug swconfig \
+-	kmod-ath9k wpad-mini uboot-envtools
++	kmod-ath9k wpad
+ 
+ $(eval $(call BuildTarget))

@@ -1,0 +1,22 @@
+diff --git a/config/Config-build.in b/config/Config-build.in
+index 7c82e8b..a3b88b5 100644
+--- a/config/Config-build.in
++++ b/config/Config-build.in
+@@ -221,7 +221,7 @@ menu "Global build settings"
+ 	choice
+ 		prompt "User space Stack-Smashing Protection"
+ 		depends on USE_MUSL
+-		default PKG_CC_STACKPROTECTOR_REGULAR
++		default PKG_CC_STACKPROTECTOR_STRONG
+ 		help
+ 		  Enable GCC Stack Smashing Protection (SSP) for userspace applications
+ 		config PKG_CC_STACKPROTECTOR_NONE
+@@ -239,7 +239,7 @@ menu "Global build settings"
+ 
+ 	choice
+ 		prompt "Kernel space Stack-Smashing Protection"
+-		default KERNEL_CC_STACKPROTECTOR_REGULAR
++		default KERNEL_CC_STACKPROTECTOR_STRONG
+ 		depends on USE_MUSL || !(x86_64 || i386)
+ 		help
+ 		  Enable GCC Stack-Smashing Protection (SSP) for the kernel

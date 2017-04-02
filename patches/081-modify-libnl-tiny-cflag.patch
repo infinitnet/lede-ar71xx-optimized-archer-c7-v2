@@ -1,0 +1,12 @@
+diff --git a/package/libs/libnl-tiny/src/Makefile b/package/libs/libnl-tiny/src/Makefile
+index 6f37160..24946ea 100644
+--- a/package/libs/libnl-tiny/src/Makefile
++++ b/package/libs/libnl-tiny/src/Makefile
+@@ -1,6 +1,6 @@
+ CC=gcc
+ WFLAGS=-Wall
+-CFLAGS=-O2
++CFLAGS=$(TARGET_CFLAGS)
+ INCLUDES=-Iinclude
+ 
+ LIBNAME=libnl-tiny.so

@@ -1,0 +1,20 @@
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 898bde1..1c6de79 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -55,11 +55,11 @@
+ #define AG71XX_TX_RING_SPLIT		512
+ #define AG71XX_TX_RING_DS_PER_PKT	DIV_ROUND_UP(AG71XX_TX_MTU_LEN, \
+ 						     AG71XX_TX_RING_SPLIT)
+-#define AG71XX_TX_RING_SIZE_DEFAULT	128
+-#define AG71XX_RX_RING_SIZE_DEFAULT	256
++#define AG71XX_TX_RING_SIZE_DEFAULT	256
++#define AG71XX_RX_RING_SIZE_DEFAULT	512
+ 
+-#define AG71XX_TX_RING_SIZE_MAX		128
+-#define AG71XX_RX_RING_SIZE_MAX		256
++#define AG71XX_TX_RING_SIZE_MAX		256
++#define AG71XX_RX_RING_SIZE_MAX		512
+ 
+ #ifdef CONFIG_AG71XX_DEBUG
+ #define DBG(fmt, args...)	pr_debug(fmt, ## args)

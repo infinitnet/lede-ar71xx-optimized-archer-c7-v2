@@ -1,0 +1,31 @@
+diff --git a/target/linux/ar71xx/patches-4.4/010-no-l2-cache-runtime-check.patch b/target/linux/ar71xx/patches-4.4/010-no-l2-cache-runtime-check.patch
+new file mode 100644
+index 0000000..7ee5809
+--- /dev/null
++++ b/./target/linux/ar71xx/patches-4.4/010-no-l2-cache-runtime-check.patch
+@@ -0,0 +1,25 @@
++--- a/arch/mips/include/asm/mach-ath79/cpu-feature-overrides.h
+++++ b/arch/mips/include/asm/mach-ath79/cpu-feature-overrides.h
++@@ -22,6 +22,7 @@
++ #define cpu_has_4k_cache	1
++ #define cpu_has_tx39_cache	0
++ #define cpu_has_sb1_cache	0
+++#define cpu_has_inclusive_pcaches	0
++ #define cpu_has_fpu		0
++ #define cpu_has_32fpr		0
++ #define cpu_has_counter		1
++@@ -32,12 +33,12 @@
++ #define cpu_has_ejtag		1
++ #define cpu_has_llsc		1
++ 
++-#define cpu_has_mips16		1
+++#define cpu_has_mips16		0
++ #define cpu_has_mdmx		0
++ #define cpu_has_mips3d		0
++ #define cpu_has_smartmips	0
++ 
++-#define cpu_has_mips32r1	1
+++#define cpu_has_mips32r1	0
++ #define cpu_has_mips32r2	1
++ #define cpu_has_mips64r1	0
++ #define cpu_has_mips64r2	0

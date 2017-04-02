@@ -28,13 +28,17 @@ Yes! Open `/etc/config/dnscrypt-proxy` with `nano` or `vim` and change `option r
 
 **Do you offer any quality assurance?**
 
-Sort of. I push updates manually after testing the builds on my own C7, which prevents major issues with the releases you can find here.
+Sort of. I push releases manually after testing the builds on my own C7, which prevents major issues with the releases you can find here. The nightly builds are untested!
 
 **My clients are unable to connect to the internet after flashing this firmware!**
 
 If you preserved your settings (which usually works without issues), make sure to remove `mtu_fix 1` in `/etc/config/firewall`. This will fix that issue.
 
 ## Changelog
+- 2017-04-02
+  - Upstream updates
+  - Added patches and files source code
+  - Added nightly builds based on latest release configs to keep up with upstream developments
 - 2017-04-01
   - **Important:** If your clients don't get an internet connection after upgrade, please remove option `mtu_fix 1` in `/etc/config/firewall`
   - pppossh added

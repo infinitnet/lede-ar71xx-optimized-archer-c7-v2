@@ -1,0 +1,4 @@
+/etc/init.d/dnscrypt-proxy enable
+/etc/init.d/dnscrypt-proxy restart
+echo "exit 0" > /etc/rc.local
+exit 0

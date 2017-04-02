@@ -1,0 +1,15 @@
+diff --git a/toolchain/musl/common.mk b/toolchain/musl/common.mk
+index 3045c63..3ef6324 100644
+--- a/toolchain/musl/common.mk
++++ b/toolchain/musl/common.mk
+@@ -34,8 +34,9 @@ MUSL_CONFIGURE:= \
+ 		--prefix=/ \
+ 		--host=$(GNU_HOST_NAME) \
+ 		--target=$(REAL_GNU_TARGET_NAME) \
++		--enable-visibility \
+ 		--disable-gcc-wrapper \
+-		--enable-debug
++		--disable-debug
+ 
+ define Host/Prepare
+ 	$(call Host/Prepare/Default)

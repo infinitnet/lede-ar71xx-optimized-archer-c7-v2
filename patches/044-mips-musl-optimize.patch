@@ -1,0 +1,17 @@
+diff --git a/./toolchain/musl/patches/930-mips-optimize.patch b/./toolchain/musl/patches/930-mips-optimize.patch
+new file mode 100644
+index 0000000..41ef8dc
+--- /dev/null
++++ b/./toolchain/musl/patches/930-mips-optimize.patch
+@@ -0,0 +1,11 @@
++--- a/Makefile
+++++ b/Makefile
++@@ -33,7 +33,7 @@ LDFLAGS_AUTO =
++ LIBCC = -lgcc
++ CPPFLAGS =
++ CFLAGS =
++-CFLAGS_AUTO = -Os -pipe
+++CFLAGS_AUTO = -O3 -pipe -march=74kc -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt
++ CFLAGS_C99FSE = -std=c99 -ffreestanding -nostdinc 
++ 
++ CFLAGS_ALL = $(CFLAGS_C99FSE)

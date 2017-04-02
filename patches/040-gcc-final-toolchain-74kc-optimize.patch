@@ -1,0 +1,30 @@
+diff --git a/toolchain/gcc/final/Makefile b/toolchain/gcc/final/Makefile
+index 3434d89..f64242b 100644
+--- a/toolchain/gcc/final/Makefile
++++ b/toolchain/gcc/final/Makefile
+@@ -7,9 +7,11 @@ GCC_CONFIGURE += \
+ 	--disable-libsanitizer \
+ 	--enable-languages=$(TARGET_LANGUAGES) \
+ 	--enable-shared \
+-	--enable-threads \
++	--enable-threads=posix \
+ 	--with-slibdir=$(TOOLCHAIN_DIR)/lib \
+ 	--enable-lto \
++	--enable-libstdcxx-threads \
++	--disable-nls --with-mips-plt \
+ 	--with-libelf=$(TOPDIR)/staging_dir/host
+ 
+ ifdef CONFIG_USE_MUSL
+diff --git a/toolchain/Config.in b/toolchain/Config.in
+index c7072fc..eee45cb 100644
+--- a/toolchain/Config.in
++++ b/toolchain/Config.in
+@@ -28,7 +28,7 @@ menuconfig TARGET_OPTIONS
+ 	config USE_MIPS16
+ 		bool "Build packages with MIPS16 instructions" if TARGET_OPTIONS
+ 		depends on HAS_MIPS16
+-		default y
++		default n
+ 		help
+ 		  If your target CPU does support the MIPS16 instruction set
+ 		  and you want to use it for packages, enable this option.

@@ -1,0 +1,67 @@
+diff --git a/package/kernel/mac80211/patches/941-remove-dma-no-op-from-ath9k.patch b/package/kernel/mac80211/patches/941-remove-dma-no-op-from-ath9k.patch
+new file mode 100644
+index 0000000..553ceb9
+--- /dev/null
++++ b/./package/kernel/mac80211/patches/941-remove-dma-no-op-from-ath9k.patch
+@@ -0,0 +1,61 @@
++--- a/drivers/net/wireless/ath/ath9k/beacon.c
+++++ b/drivers/net/wireless/ath/ath9k/beacon.c
++@@ -128,8 +128,8 @@ static struct ath_buf *ath9k_beacon_gene
++ 	bf = avp->av_bcbuf;
++ 	skb = bf->bf_mpdu;
++ 	if (skb) {
++-		dma_unmap_single(sc->dev, bf->bf_buf_addr,
++-				 skb->len, DMA_TO_DEVICE);
+++		/*dma_unmap_single(sc->dev, bf->bf_buf_addr,
+++				 skb->len, DMA_TO_DEVICE);*/
++ 		dev_kfree_skb_any(skb);
++ 		bf->bf_buf_addr = 0;
++ 		bf->bf_mpdu = NULL;
++@@ -230,8 +230,8 @@ void ath9k_beacon_remove_slot(struct ath
++ 
++ 	if (bf && bf->bf_mpdu) {
++ 		struct sk_buff *skb = bf->bf_mpdu;
++-		dma_unmap_single(sc->dev, bf->bf_buf_addr,
++-				 skb->len, DMA_TO_DEVICE);
+++		/*dma_unmap_single(sc->dev, bf->bf_buf_addr,
+++				 skb->len, DMA_TO_DEVICE);*/
++ 		dev_kfree_skb_any(skb);
++ 		bf->bf_mpdu = NULL;
++ 		bf->bf_buf_addr = 0;
++--- a/drivers/net/wireless/ath/ath9k/recv.c
+++++ b/drivers/net/wireless/ath/ath9k/recv.c
++@@ -179,9 +179,9 @@ static void ath_rx_edma_cleanup(struct a
++ 
++ 	list_for_each_entry(bf, &sc->rx.rxbuf, list) {
++ 		if (bf->bf_mpdu) {
++-			dma_unmap_single(sc->dev, bf->bf_buf_addr,
+++			/*dma_unmap_single(sc->dev, bf->bf_buf_addr,
++ 					common->rx_bufsize,
++-					DMA_BIDIRECTIONAL);
+++					DMA_BIDIRECTIONAL);*/
++ 			dev_kfree_skb_any(bf->bf_mpdu);
++ 			bf->bf_buf_addr = 0;
++ 			bf->bf_mpdu = NULL;
++@@ -343,9 +343,9 @@ void ath_rx_cleanup(struct ath_softc *sc
++ 	list_for_each_entry(bf, &sc->rx.rxbuf, list) {
++ 		skb = bf->bf_mpdu;
++ 		if (skb) {
++-			dma_unmap_single(sc->dev, bf->bf_buf_addr,
+++			/*dma_unmap_single(sc->dev, bf->bf_buf_addr,
++ 					 common->rx_bufsize,
++-					 DMA_FROM_DEVICE);
+++					 DMA_FROM_DEVICE);*/
++ 			dev_kfree_skb(skb);
++ 			bf->bf_buf_addr = 0;
++ 			bf->bf_mpdu = NULL;
++--- a/drivers/net/wireless/ath/ath9k/xmit.c
+++++ b/drivers/net/wireless/ath/ath9k/xmit.c
++@@ -2528,7 +2528,7 @@ static void ath_tx_complete_buf(struct a
++ 	if (ts->ts_status & ATH9K_TXERR_FILT)
++ 		tx_info->flags |= IEEE80211_TX_STAT_TX_FILTERED;
++ 
++-	dma_unmap_single(sc->dev, bf->bf_buf_addr, skb->len, DMA_TO_DEVICE);
+++	/*dma_unmap_single(sc->dev, bf->bf_buf_addr, skb->len, DMA_TO_DEVICE);*/
++ 	bf->bf_buf_addr = 0;
++ 	if (sc->tx99_state)
++ 		goto skip_tx_complete;

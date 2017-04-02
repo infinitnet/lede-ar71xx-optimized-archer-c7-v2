@@ -1,0 +1,47 @@
+--- a/feeds/luci/modules/luci-mod-admin-full/luasrc/model/cbi/admin_network/wifi.lua
++++ b/feeds/luci/modules/luci-mod-admin-full/luasrc/model/cbi/admin_network/wifi.lua
+@@ -243,8 +243,24 @@ if hwtype == "mac80211" then
+ 		end
+ 	end
+ 
++	noscan=s:taboption("advanced", Flag, "noscan", translate("Force 40MHz mode"),"Always use 40MHz channels even if the secondary channel overlaps. Using this option does not comply with IEEE 802.11n-2009!")
++	noscan.optional = true
++
+ 	s:taboption("advanced", Value, "frag", translate("Fragmentation Threshold"))
+ 	s:taboption("advanced", Value, "rts", translate("RTS/CTS Threshold"))
++
++	log_level = s:taboption("advanced", ListValue, "log_level", translate("Logging Level"))
++	log_level.optional = true
++	log_level:value("2", "Informational Message")
++	log_level:value("0", "Verbose Debugging")
++	log_level:value("1", "Debugging")
++	log_level:value("3", "Notification")
++	log_level:value("4", "Warning")
++
++	beacon_int = s:taboption("advanced", Value, "beacon_int", translate("Beacon Interval"),"(15 - 65535)")
++	beacon_int.optional = true
++	beacon_int.placeholder = 100
++
+ end
+ 
+ 
+@@ -521,6 +537,21 @@ if hwtype == "mac80211" then
+ 	
+ 	ifname = s:taboption("advanced", Value, "ifname", translate("Interface name"), translate("Override default interface name"))
+ 	ifname.optional = true
++
++	short_preamble = s:taboption("general", Flag, "short_preamble", translate("Short Preamble"))
++	short_preamble.default = short_preamble.enabled
++
++	isolate = s:taboption("general", Flag, "isolate", translate("Wireless Client Isolation"))
++	isolate.optional = true
++	isolate:depends({mode="ap"})
++
++	dtim_period = s:taboption("general", Value, "dtim_period", translate("DTIM Interval"),"Delivery Traffic Indication Message Interval")
++	dtim_period.optional = true
++	dtim_period.placeholder = 2
++
++	disassoc_low_ack = s:taboption("general", Flag, "disassoc_low_ack", translate("Disassociate On Low Acknowledgement"),"Allow AP mode to disconnect STAs based on low ACK condition")
++	disassoc_low_ack.default = disassoc_low_ack.enabled
++
+ end

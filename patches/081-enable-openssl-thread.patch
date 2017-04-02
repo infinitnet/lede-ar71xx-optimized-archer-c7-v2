@@ -1,0 +1,43 @@
+diff --git a/package/libs/openssl/Config.in b/package/libs/openssl/Config.in
+index e2aa10d..e1cb52b 100644
+--- a/package/libs/openssl/Config.in
++++ b/package/libs/openssl/Config.in
+@@ -25,6 +25,12 @@ config OPENSSL_ENGINE_DIGEST
+ 	depends on OPENSSL_ENGINE_CRYPTO
+ 	prompt "Digests acceleration support"
+ 
++config OPENSSL_THREADS
++	bool
++	prompt "Threading support"
++	default y
++	select PACKAGE_libpthread
++
+ config OPENSSL_HARDWARE_SUPPORT
+ 	bool
+ 	default n
+diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
+index bbdd521..043e3ff 100644
+--- a/package/libs/openssl/Makefile
++++ b/package/libs/openssl/Makefile
+@@ -33,6 +33,7 @@ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_OPENSSL_WITH_EC2M \
+ 	CONFIG_OPENSSL_WITH_SSL3 \
+ 	CONFIG_OPENSSL_HARDWARE_SUPPORT \
++	CONFIG_OPENSSL_THREADS \
+ 	CONFIG_OPENSSL_WITH_DEPRECATED \
+ 	CONFIG_OPENSSL_WITH_COMPRESSION \
+ 	CONFIG_OPENSSL_WITH_NPN \
+
+@@ -92,6 +93,12 @@ endef
+ OPENSSL_NO_CIPHERS:= no-idea no-md2 no-mdc2 no-rc5 no-sha0 no-camellia no-krb5
+ OPENSSL_OPTIONS:= shared no-err zlib-dynamic no-sse2 no-ssl2
+ 
++ifdef CONFIG_OPENSSL_THREADS
++  OPENSSL_OPTIONS += threads
++else
++  OPENSSL_OPTIONS += no-threads
++endif
++
+ ifdef CONFIG_OPENSSL_ENGINE_CRYPTO
+   OPENSSL_OPTIONS += -DHAVE_CRYPTODEV
+   ifdef CONFIG_OPENSSL_ENGINE_DIGEST
