@@ -32,7 +32,7 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 
 **My clients are unable to connect to the internet after flashing this firmware!**
 
-Just reboot your router once and it should work. If it still doesn't work and you preserved your settings (which usually works fine), make sure to remove `mtu_fix 1` in `/etc/config/firewall`.
+Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
 - 2017-04-02
@@ -40,7 +40,6 @@ Just reboot your router once and it should work. If it still doesn't work and yo
   - Added patches and files source code
   - Added nightly builds based on latest release configs to keep up with upstream developments
 - 2017-04-01
-  - **Important:** If your clients don't get an internet connection after upgrade, please remove option `mtu_fix 1` in `/etc/config/firewall`
   - pppossh added
   - openssh-sftp-server added
   - Many netfilter modules removed to increase throughput
