@@ -1,8 +1,8 @@
-diff --git a/./toolchain/musl/patches/930-mips-optimize.patch b/./toolchain/musl/patches/930-mips-optimize.patch
+diff --git a/toolchain/musl/patches/930-mips-optimize.patch b/toolchain/musl/patches/930-mips-optimize.patch
 new file mode 100644
 index 0000000..41ef8dc
 --- /dev/null
-+++ b/./toolchain/musl/patches/930-mips-optimize.patch
++++ b/toolchain/musl/patches/930-mips-optimize.patch
 @@ -0,0 +1,11 @@
 +--- a/Makefile
 ++++ b/Makefile

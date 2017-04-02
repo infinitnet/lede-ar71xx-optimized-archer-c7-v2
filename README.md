@@ -32,7 +32,7 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 
 **My clients are unable to connect to the internet after flashing this firmware!**
 
-If you preserved your settings (which usually works without issues), make sure to remove `mtu_fix 1` in `/etc/config/firewall`. This will fix that issue.
+Just reboot your router once and it should work. If it still doesn't work and you preserved your settings (which usually works fine), make sure to remove `mtu_fix 1` in `/etc/config/firewall`.
 
 ## Changelog
 - 2017-04-02
