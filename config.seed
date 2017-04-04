@@ -61,9 +61,11 @@ CONFIG_PACKAGE_aiccu=y
 # CONFIG_PACKAGE_b43legacy-firmware is not set
 CONFIG_PACKAGE_bcp38=y
 CONFIG_PACKAGE_block-mount=y
+# CONFIG_PACKAGE_blockd is not set
 # CONFIG_PACKAGE_bnx2-firmware is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-usb is not set
 CONFIG_PACKAGE_bzip2=y
+CONFIG_PACKAGE_ca-bundle=y
 CONFIG_PACKAGE_ca-certificates=y
 # CONFIG_PACKAGE_carl9170-firmware is not set
 # CONFIG_PACKAGE_chat is not set

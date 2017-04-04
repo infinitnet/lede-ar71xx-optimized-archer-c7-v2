@@ -35,6 +35,8 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
+- 2017-04-04
+  - `ca-bundle` added
 - 2017-04-02
   - Upstream updates
   - Added patches and files source code
