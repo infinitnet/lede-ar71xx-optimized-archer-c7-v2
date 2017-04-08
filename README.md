@@ -35,6 +35,10 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
+- 2017-04-08
+  - Re-added netfilter modules present on vanilla LEDE
+  - Removed AOE and ATA related kernel modules
+  - Upstream updates
 - 2017-04-04
   - `ca-bundle` added
 - 2017-04-02
