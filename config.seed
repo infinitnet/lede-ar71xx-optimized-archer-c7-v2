@@ -57,7 +57,7 @@ CONFIG_PACKAGE_TAR_GZIP=y
 CONFIG_PACKAGE_TAR_XZ=y
 CONFIG_PACKAGE_aiccu=y
 # CONFIG_PACKAGE_ar3k-firmware is not set
-# CONFIG_PACKAGE_ath9k-htc-firmware is not set
+CONFIG_PACKAGE_ath9k-htc-firmware=y
 # CONFIG_PACKAGE_b43legacy-firmware is not set
 CONFIG_PACKAGE_bcp38=y
 CONFIG_PACKAGE_block-mount=y
@@ -627,6 +627,7 @@ CONFIG_PACKAGE_ntpclient=y
 # CONFIG_PACKAGE_objdump is not set
 CONFIG_PACKAGE_openssh-sftp-server=y
 CONFIG_PACKAGE_openssl-util=y
+CONFIG_PACKAGE_openvpn-easy-rsa=y
 CONFIG_PACKAGE_openvpn-openssl=y
 # CONFIG_PACKAGE_p54-pci-firmware is not set
 # CONFIG_PACKAGE_p54-usb-firmware is not set

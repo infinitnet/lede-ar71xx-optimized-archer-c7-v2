@@ -35,6 +35,10 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
+- 2017-05-22
+  - Added ath9k firmware modules
+  - Added `openvpn-easy-rsa`
+  - Upstream updates
 - 2017-04-27
   - Moved from OpenNIC to OpenDNS (they dropped port 443 support)
   - Upstream updates
