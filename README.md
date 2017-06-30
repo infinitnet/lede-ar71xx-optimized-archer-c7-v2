@@ -2,12 +2,13 @@
 
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
-- Baked using latest GCC version 6.3 with -O3, 74kc, binutils 2.27 and various patches to maximize performance
+- Baked using latest GCC version 6.3 with -O3, 24kc, binutils 2.28 and various patches to maximize performance
 - LuCI SSL Web Interface
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
-- TOR ready
 - DNSCrypt using Cisco OpenDNS for your security, privacy & freedom
 - QoS with SQM (cake & more)
+- Qualcomm Fast Path
+- Hardware NAT ready
 - Simple Adblock available in LuCI
 - Dynamic DNS support
 - WiFi Schedule (disable/enable WiFi at specific times)
@@ -35,6 +36,15 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
+- 2017-06-29
+  - Switched to MIPS 24kc, which means you can now use the official LEDE repository to install and update packages
+  - Hardware NAT support added
+  - Qualcomm Fast Path added
+  - Updated all of gwlim's patches & added a couple of new ones
+  - Added `ds-lite`, `map-t`, `xl2tpd` and `ssdk_sh`
+  - `tor` removed (install with opkg if you need it)
+  - Used binutils 2.28
+  - Upstream updates
 - 2017-05-22
   - Added ath9k firmware modules
   - Added `openvpn-easy-rsa`
