@@ -1,10 +1,13 @@
 diff --git a/target/linux/ar71xx/image/lzma-loader/src/Makefile b/target/linux/ar71xx/image/lzma-loader/src/Makefile
-index 5f10bdb..e4465bd 100644
+index 5f10bdb..15932cc 100644
 --- a/target/linux/ar71xx/image/lzma-loader/src/Makefile
 +++ b/target/linux/ar71xx/image/lzma-loader/src/Makefile
-@@ -32,10 +32,10 @@ BIN_FLAGS	:= -O binary -R .reginfo -R .note -R .comment -R .mdebug \
+@@ -30,12 +30,12 @@ OBJDUMP		:= $(CROSS_COMPILE)objdump
+ BIN_FLAGS	:= -O binary -R .reginfo -R .note -R .comment -R .mdebug \
+ 		   -R .MIPS.abiflags -S
  
- CFLAGS		= -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -Os \
+-CFLAGS		= -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -Os \
++CFLAGS		= -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 \
  		  -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 \
 -		  -mno-abicalls -fno-pic -ffunction-sections -pipe -mlong-calls \
 +		  -mno-abicalls -fno-pic -ffunction-sections -pipe \

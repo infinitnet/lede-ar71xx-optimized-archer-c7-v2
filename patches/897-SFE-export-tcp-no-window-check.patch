@@ -1,0 +1,16 @@
+diff --git a/./target/linux/generic/patches-4.4/897-SFE-export-tcp-no-window-check.patch b/./target/linux/generic/patches-4.4/897-SFE-export-tcp-no-window-check.patch
+new file mode 100644
+index 0000000..9fa9dc4
+--- /dev/null
++++ b/./target/linux/generic/patches-4.4/897-SFE-export-tcp-no-window-check.patch
+@@ -0,0 +1,10 @@
++--- a/net/netfilter/nf_conntrack_proto_tcp.c	2017-06-24 13:13:49.000000000 +0800
+++++ b/net/netfilter/nf_conntrack_proto_tcp.c	2017-06-24 13:19:01.380150433 +0800
++@@ -35,6 +35,7 @@
++ 
++ /* Do not check the TCP window for incoming packets  */
++ static int nf_ct_tcp_no_window_check __read_mostly = 1;
+++EXPORT_SYMBOL_GPL(nf_ct_tcp_no_window_check);
++ 
++ /* "Be conservative in what you do,
++     be liberal in what you accept from others."

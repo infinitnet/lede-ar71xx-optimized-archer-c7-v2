@@ -1,0 +1,16 @@
+--- /dev/null	2017-05-31 19:11:25.769633897 +0800
++++ ./target/linux/generic/patches-4.4/999-disable-gro-gso-default.patch	2017-05-31 20:44:54.210769624 +0800
+@@ -0,0 +1,13 @@
++--- a/net/core/dev.c
+++++ b/net/core/dev.c
++@@ -6770,8 +6770,8 @@ int register_netdevice(struct net_device
++ 	/* Transfer changeable features to wanted_features and enable
++ 	 * software offloads (GSO and GRO).
++ 	 */
++-	dev->hw_features |= NETIF_F_SOFT_FEATURES;
++-	dev->features |= NETIF_F_SOFT_FEATURES;
+++	dev->hw_features |= NETIF_F_SOFT_FEATURES;
+++	//dev->features |= NETIF_F_SOFT_FEATURES;
++ 	dev->wanted_features = dev->features & dev->hw_features;
++ 
++ 	if (!(dev->flags & IFF_LOOPBACK)) {

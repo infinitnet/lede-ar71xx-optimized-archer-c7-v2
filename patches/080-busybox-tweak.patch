@@ -1,0 +1,136 @@
+diff --git a/package/utils/busybox/Config-defaults.in b/package/utils/busybox/Config-defaults.in
+index 1977e7f..4fd3769 100644
+--- a/package/utils/busybox/Config-defaults.in
++++ b/package/utils/busybox/Config-defaults.in
+@@ -27,10 +27,10 @@ config BUSYBOX_DEFAULT_FEATURE_BUFFERS_GO_IN_BSS
+ 	default n
+ config BUSYBOX_DEFAULT_SHOW_USAGE
+ 	bool
+-	default y
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_VERBOSE_USAGE
+ 	bool
+-	default y
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_COMPRESS_USAGE
+ 	bool
+ 	default y
+@@ -132,7 +132,7 @@ config BUSYBOX_DEFAULT_STATIC
+ 	default n
+ config BUSYBOX_DEFAULT_PIE
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_NOMMU
+ 	bool
+ 	default n
+@@ -145,6 +145,9 @@ config BUSYBOX_DEFAULT_FEATURE_INDIVIDUAL
+ config BUSYBOX_DEFAULT_FEATURE_SHARED_BUSYBOX
+ 	bool
+ 	default n
++config BUSYBOX_DEFAULT_BUILD_AT_ONCE
++	bool
++	default y
+ config BUSYBOX_DEFAULT_LFS
+ 	bool
+ 	default y
+@@ -246,7 +249,7 @@ config BUSYBOX_DEFAULT_FEATURE_EDITING_VI
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_EDITING_HISTORY
+ 	int
+-	default 256
++	default 16
+ config BUSYBOX_DEFAULT_FEATURE_EDITING_SAVEHISTORY
+ 	bool
+ 	default n
+@@ -1188,22 +1191,22 @@ config BUSYBOX_DEFAULT_REMOVE_SHELL
+ 	default n
+ config BUSYBOX_DEFAULT_ADDGROUP
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_ADDGROUP_LONG_OPTIONS
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_ADDUSER_TO_GROUP
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_ADDUSER
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_ADDUSER_LONG_OPTIONS
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_CHECK_NAMES
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_LAST_ID
+ 	int
+ 	default 0
+@@ -1467,13 +1470,13 @@ config BUSYBOX_DEFAULT_FDFORMAT
+ 	default n
+ config BUSYBOX_DEFAULT_FDISK
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FDISK_SUPPORT_LARGE_DISKS
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_FDISK_WRITABLE
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_AIX_LABEL
+ 	bool
+ 	default n
+@@ -1488,7 +1491,7 @@ config BUSYBOX_DEFAULT_FEATURE_OSF_LABEL
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_GPT_LABEL
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_FDISK_ADVANCED
+ 	bool
+ 	default n
+@@ -2340,7 +2343,7 @@ config BUSYBOX_DEFAULT_FEATURE_TRACEROUTE_SOURCE_ROUTE
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_TRACEROUTE_USE_ICMP
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_TUNCTL
+ 	bool
+ 	default n
+@@ -2436,7 +2439,7 @@ config BUSYBOX_DEFAULT_FEATURE_REFORMIME_COMPAT
+ 	default n
+ config BUSYBOX_DEFAULT_SENDMAIL
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_IOSTAT
+ 	bool
+ 	default n
+@@ -2541,7 +2544,7 @@ config BUSYBOX_DEFAULT_FEATURE_PS_UNUSUAL_SYSTEMS
+ 	default n
+ config BUSYBOX_DEFAULT_RENICE
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_BB_SYSCTL
+ 	bool
+ 	default y
+@@ -2667,7 +2670,7 @@ config BUSYBOX_DEFAULT_ASH_MAIL
+ 	default n
+ config BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE
+ 	bool
+-	default n
++	default n
+ config BUSYBOX_DEFAULT_ASH_RANDOM_SUPPORT
+ 	bool
+ 	default n

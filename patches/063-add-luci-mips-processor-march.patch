@@ -10,7 +10,7 @@
  	local unameinfo = nixio.uname() or { }
  
  	local meminfo = sysinfo.memory or {
-@@ -684,6 +687,8 @@
+@@ -682,6 +685,8 @@
  	<table width="100%" cellspacing="10">
  		<tr><td width="33%"><%:Hostname%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
  		<tr><td width="33%"><%:Model%></td><td><%=pcdata(boardinfo.model or boardinfo.system or "?")%></td></tr>

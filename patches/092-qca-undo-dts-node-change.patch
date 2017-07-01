@@ -1,0 +1,62 @@
+--- a/package/qca/qca-ssdk/src/src/init/ssdk_init.c	2017-03-19 12:33:12.000000000 +0800
++++ a/package/qca/qca-ssdk/src/src/init/ssdk_init.c	2017-03-19 13:08:15.747611054 +0800
+@@ -1861,30 +1861,41 @@ static int miibus_get(void)
+ 	}
+ 	#else
+ 	struct ag71xx_mdio *am;
+-	struct device_node *mdio_node = NULL;
+-	struct platform_device *mdio_plat = NULL;
+ 
+-	mdio_node = of_find_compatible_node(NULL, NULL, "qca,ag71xx-mdio");
+-	if (!mdio_node) {
+-		printk("No MDIO node found in DTS!\n");
+-		return 1;
+-	}
+-	mdio_plat = of_find_device_by_node(mdio_node);
+-	if (!mdio_plat) {
+-		printk("cannot find platform device from mdio node\n");
++	struct device *miidev;
++	char busid[MII_BUS_ID_SIZE];
++	snprintf(busid, MII_BUS_ID_SIZE, "%s.%d",
++		IPQ806X_MDIO_BUS_NAME, IPQ806X_MDIO_BUS_NUM);
++
++	miidev = bus_find_device_by_name(&platform_bus_type, NULL, busid);
++	if (!miidev) {
++		printk("cannot get mii bus\n");
+ 		return 1;
+ 	}
+-	am = dev_get_drvdata(&mdio_plat->dev);
+-	if (!am) {
+-                	printk("cannot get mdio_data reference from device data\n");
+-                	return 1;
+-	}
++
++	am = dev_get_drvdata(miidev);
+ 	miibus = am->mii_bus;
+-	if (!miibus) {
+-		printk("cannot get mii bus reference from device data\n");
++
++	if(switch_chip_id_adjuest()) {
++
++		snprintf(busid, MII_BUS_ID_SIZE, "%s.%d",
++		IPQ806X_MDIO_BUS_NAME, MDIO_BUS_1);
++
++		miidev = bus_find_device_by_name(&platform_bus_type, NULL, busid);
++		if (!miidev) {
++			printk("cannot get mii bus\n");
++			return 1;
++		}
++
++		am = dev_get_drvdata(miidev);
++		miibus = am->mii_bus;
++		printk("chip_version:0x%x\n", (qca_ar8216_mii_read(0)&0xff00)>>8);
++	}
++
++	if(!miidev){
++		printk("mdio bus '%s' get FAIL\n", busid);
+ 		return 1;
+ 	}
+-	switch_chip_id_adjuest();
+ 	#endif
+ #else
+ #ifdef BOARD_AR71XX

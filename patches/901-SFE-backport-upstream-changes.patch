@@ -1,0 +1,23 @@
+--- ./package/qca/shortcut-fe/src/fast-classifier/fast-classifier.c	2017-06-26 13:51:32.995819632 +0800
++++ ./package/qca/shortcut-fe/src/fast-classifier/fast-classifier.c	2017-06-26 13:51:27.395807761 +0800
+@@ -221,6 +221,10 @@ int fast_classifier_recv(struct sk_buff
+ 	if (skip_to_bridge_ingress &&
+ 	    (dev->priv_flags & IFF_BRIDGE_PORT)) {
+ 		master_dev = sfe_dev_get_master(dev);
++		if (!master_dev) {
++			DEBUG_WARN("master dev is NULL %s\n");
++			goto rx_exit;
++		}
+ 		dev = master_dev;
+ 	}
+ 
+--- ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv6.c	2017-06-26 13:51:50.427856581 +0800
++++ ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv6.c	2017-06-26 13:51:41.668838015 +0800
+@@ -1061,6 +1061,7 @@ static void sfe_ipv6_gen_sync_connection
+ 	/*
+ 	 * Fill in the update message.
+ 	 */
++	sis->is_v6 = 1;
+ 	sis->protocol = c->protocol;
+ 	sis->src_ip.ip6[0] = c->src_ip[0];
+ 	sis->src_ip_xlate.ip6[0] = c->src_ip_xlate[0];

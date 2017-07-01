@@ -17,11 +17,11 @@
 +	log_level:value("1", "Debugging")
 +	log_level:value("3", "Notification")
 +	log_level:value("4", "Warning")
-+
 +	beacon_int = s:taboption("advanced", Value, "beacon_int", translate("Beacon Interval"),"(15 - 65535)")
 +	beacon_int.optional = true
 +	beacon_int.placeholder = 100
-+
++	legacy_rates = s:taboption("general", Flag, "legacy_rates", translate("Enable Legacy Rates"))
++	legacy_rates.default = legacy_rates.enabled
  end
  
  

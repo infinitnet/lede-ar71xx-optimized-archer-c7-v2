@@ -1,0 +1,33 @@
+--- ./package/qca/shortcut-fe/src/shortcut-fe/sfe.h	2017-06-26 13:52:06.617890899 +0800
++++ ./package/qca/shortcut-fe/src/shortcut-fe/sfe.h	2017-06-26 13:52:01.583880228 +0800
+@@ -18,7 +18,7 @@
+ /*
+  * Debug output verbosity level.
+  */
+-#define DEBUG_LEVEL 2
++#define DEBUG_LEVEL 0
+ 
+ #if (DEBUG_LEVEL < 1)
+ #define DEBUG_ERROR(s, ...)
+--- ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv4.c	2017-06-26 13:51:32.995819632 +0800
++++ ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv4.c	2017-06-26 13:51:27.395807761 +0800
+@@ -38,7 +38,7 @@
+  */
+ #define SFE_IPV4_UNALIGNED_IP_HEADER 1
+ #if SFE_IPV4_UNALIGNED_IP_HEADER
+-#define SFE_IPV4_UNALIGNED_STRUCT __attribute__((packed))
++#define SFE_IPV4_UNALIGNED_STRUCT __attribute__((aligned(4)))
+ #else
+ #define SFE_IPV4_UNALIGNED_STRUCT
+ #endif
+--- ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv6.c	2017-06-26 13:51:50.427856581 +0800
++++ ./package/qca/shortcut-fe/src/shortcut-fe/sfe_ipv6.c	2017-06-26 13:51:41.668838015 +0800
+@@ -37,7 +37,7 @@
+  */
+ #define SFE_IPV6_UNALIGNED_IP_HEADER 1
+ #if SFE_IPV6_UNALIGNED_IP_HEADER
+-#define SFE_IPV6_UNALIGNED_STRUCT __attribute__((packed))
++#define SFE_IPV6_UNALIGNED_STRUCT __attribute__((aligned(4)))
+ #else
+ #define SFE_IPV6_UNALIGNED_STRUCT
+ #endif

@@ -1,55 +1,13 @@
---- ./target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
-+++ ./target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
-@@ -98,7 +98,7 @@ struct ag71xx_buf {
- 		unsigned long	timestamp;
- 	};
- 	unsigned int		len;
--};
-+} __attribute__((aligned(4)));
- 
- struct ag71xx_ring {
- 	struct ag71xx_buf	*buf;
-@@ -108,14 +108,14 @@ struct ag71xx_ring {
- 	u16			order;
- 	unsigned int		curr;
- 	unsigned int		dirty;
--};
-+} __attribute__((aligned(4)));
- 
- struct ag71xx_mdio {
- 	struct mii_bus		*mii_bus;
- 	int			mii_irq[PHY_MAX_ADDR];
- 	void __iomem		*mdio_base;
- 	struct ag71xx_mdio_platform_data *pdata;
--};
-+} __attribute__((aligned(4)));
- 
- struct ag71xx_int_stats {
- 	unsigned long		rx_pr;
-@@ -152,7 +152,7 @@ struct ag71xx {
- 
- 	spinlock_t		lock;
- 	struct platform_device	*pdev;
--	struct net_device	*dev;
-+	struct net_device	*dev __attribute__((aligned(4)));
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 898bde1..1c8c3d4 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -156,7 +156,7 @@ struct ag71xx {
  	struct napi_struct	napi;
  	u32			msg_enable;
  
-@@ -162,7 +162,7 @@ struct ag71xx {
+-	struct ag71xx_desc	*stop_desc;
++	struct ag71xx_desc	*stop_desc __attribute__((aligned(4)));
+ 	dma_addr_t		stop_desc_dma;
+ 
  	struct ag71xx_ring	rx_ring;
- 	struct ag71xx_ring	tx_ring;
- 
--	struct mii_bus		*mii_bus;
-+	struct mii_bus		*mii_bus __attribute__((aligned(4)));
- 	struct phy_device	*phy_dev;
- 	void			*phy_priv;
- 
-@@ -181,7 +181,7 @@ struct ag71xx {
- #ifdef CONFIG_AG71XX_DEBUG_FS
- 	struct ag71xx_debug	debug;
- #endif
--};
-+} __attribute__((aligned(4)));
- 
- extern struct ethtool_ops ag71xx_ethtool_ops;
- void ag71xx_link_adjust(struct ag71xx *ag);
