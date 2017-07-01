@@ -7,7 +7,7 @@
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - DNSCrypt using Cisco OpenDNS for your security, privacy & freedom
 - QoS with SQM (cake & more)
-- Qualcomm Fast Path
+- Qualcomm FastPath
 - Hardware NAT ready
 - Simple Adblock available in LuCI
 - Dynamic DNS support
@@ -36,10 +36,14 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
 ## Changelog
+- 2017-07-01
+  - Fixed issue with FastPath not being included
+  - Adjusted several patches
+  - Upstream updates
 - 2017-06-29
   - Switched to MIPS 24kc, which means you can now use the official LEDE repository to install and update packages
   - Hardware NAT support added
-  - Qualcomm Fast Path added
+  - Qualcomm FastPath added
   - Updated all of gwlim's patches & added a couple of new ones
   - Added `ds-lite`, `map-t`, `xl2tpd` and `ssdk_sh`
   - `tor` removed (install with opkg if you need it)

@@ -1,16 +1,7 @@
 diff --git a/package/libs/openssl/Config.in b/package/libs/openssl/Config.in
-index dbcd11a..07666ca 100644
+index dbcd11a..571db91 100644
 --- a/package/libs/openssl/Config.in
 +++ b/package/libs/openssl/Config.in
-@@ -17,7 +17,7 @@ config OPENSSL_WITH_SSL3
- 
- config OPENSSL_WITH_DEPRECATED
- 	bool
--	default y
-+	default y
- 	prompt "Include deprecated APIs"
- 
- config OPENSSL_WITH_DTLS
 @@ -50,6 +50,12 @@ config OPENSSL_ENGINE_DIGEST
  	depends on OPENSSL_ENGINE_CRYPTO
  	prompt "Digests acceleration support"

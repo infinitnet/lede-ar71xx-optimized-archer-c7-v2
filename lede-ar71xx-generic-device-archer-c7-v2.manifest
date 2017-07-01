@@ -95,6 +95,7 @@ kmod-crypto-sha512 - 4.4.74-1
 kmod-crypto-wq - 4.4.74-1
 kmod-dm - 4.4.74-1
 kmod-dnsresolver - 4.4.74-1
+kmod-fast-classifier - 4.4.74+geaaba94bf6-1
 kmod-fs-autofs4 - 4.4.74-1
 kmod-fs-btrfs - 4.4.74-1
 kmod-fs-configfs - 4.4.74-1
@@ -175,6 +176,8 @@ kmod-sched-cake - 4.4.74+2017-01-28-9789742c-1
 kmod-sched-connmark - 4.4.74-1
 kmod-sched-core - 4.4.74-1
 kmod-scsi-core - 4.4.74-1
+kmod-shortcut-fe - 4.4.74+geaaba94bf6-1
+kmod-shortcut-fe-cm - 4.4.74+geaaba94bf6-1
 kmod-siit - 4.4.74+1.2-2
 kmod-sit - 4.4.74-1
 kmod-slhc - 4.4.74-1
