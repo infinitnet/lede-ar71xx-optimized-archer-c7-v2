@@ -56,12 +56,13 @@ iw - 4.9-1
 iwinfo - 2016-09-21-fd9e17be-1
 jshn - 2017-06-17-fd57eea9-1
 jsonfilter - 2016-07-02-dea067ad-1
-kernel - 4.4.74-1-98e711ec011042ab3254629c58260209
+kernel - 4.4.74-1-93ce5a926d510d2d262d9d274a93f658
 kmod-arptables - 4.4.74-1
 kmod-ath - 4.4.74+2017-01-31-2
 kmod-ath10k - 4.4.74+2017-01-31-2
 kmod-ath9k - 4.4.74+2017-01-31-2
 kmod-ath9k-common - 4.4.74+2017-01-31-2
+kmod-ath9k-htc - 4.4.74+2017-01-31-2
 kmod-atm - 4.4.74-1
 kmod-bonding - 4.4.74-1
 kmod-br-netfilter - 4.4.74-1
@@ -186,7 +187,12 @@ kmod-udptunnel4 - 4.4.74-1
 kmod-udptunnel6 - 4.4.74-1
 kmod-usb-core - 4.4.74-1
 kmod-usb-ehci - 4.4.74-1
+kmod-usb-gadget - 4.4.74-1
+kmod-usb-gadget-eth - 4.4.74-1
+kmod-usb-gadget-mass-storage - 4.4.74-1
+kmod-usb-gadget-serial - 4.4.74-1
 kmod-usb-ledtrig-usbport - 4.4.74-1
+kmod-usb-lib-composite - 4.4.74-1
 kmod-usb-ohci - 4.4.74-1
 kmod-usb-storage - 4.4.74-1
 kmod-usb-storage-extras - 4.4.74-1
