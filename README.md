@@ -35,6 +35,10 @@ Sort of. I push releases manually after testing the builds on my own C7, which p
 
 Just reboot your router once and it should work. If it still doesn't work, make sure that `dnscrypt-proxy` is enabled and working. SSH to your router and do `service dnscrypt-proxy enable; service dnscrypt-proxy restart`.
 
+**Can I get this firmware even faster?**
+
+Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 200-30Mbps.
+
 ## Changelog
 - 2017-07-02
   - Re-added `ath9k-htc` and a couple of other recently "lost" kmods
