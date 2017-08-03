@@ -14,7 +14,7 @@
    CATEGORY:=Kernel modules
    SUBMENU:=Network Support
 -  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe +kmod-ipv6
-+  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
++  DEPENDS:=@IPV6 +kmod-ipt-conntrack +kmod-shortcut-fe
    TITLE:=Kernel driver for FAST Classifier
    FILES:=$(PKG_BUILD_DIR)/fast-classifier/fast-classifier.ko
    KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
@@ -34,7 +34,7 @@
    CATEGORY:=Kernel modules
    SUBMENU:=Network Support
 -  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe +kmod-ipv6
-+  DEPENDS:=+kmod-ipt-conntrack +kmod-shortcut-fe
++  DEPENDS:=@IPV6 +kmod-ipt-conntrack +kmod-shortcut-fe
    TITLE:=Kernel driver for SFE
    FILES:=$(PKG_BUILD_DIR)/shortcut-fe/shortcut-fe-cm.ko
    KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y

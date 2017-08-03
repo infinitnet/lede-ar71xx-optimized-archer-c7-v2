@@ -27,7 +27,7 @@ index 0000000..b1ca22d
 +ifeq ($(SFE_SUPPORT_IPV6),)
 +SFE_SUPPORT_IPV6=y
 +endif
-+ccflags-$(SFE_SUPPORT_IPV6) += -DSFE_SUPPORT_IPV6
++ccflags-$(SFE_SUPPORT_IPV6) += -DSFE_SUPPORT_IPV6 -Wno-format
 +
 +ccflags-y += -I$(obj)/../shortcut-fe
 +
@@ -694,7 +694,7 @@ index 0000000..f061c6e
 +	na = info->attrs[FAST_CLASSIFIER_A_TUPLE];
 +	fc_msg = nla_data(na);
 +
-+	DEBUG_TRACE("want to offload: %d-%d, %pIS, %pIS, %d, %d SMAC=%pM DMAC=%pM\n" :
++	DEBUG_TRACE("want to offload: %d-%d, %pIS, %pIS, %d, %d SMAC=%pM DMAC=%pM\n",
 +		fc_msg->ethertype,
 +		fc_msg->proto,
 +		&fc_msg->src_saddr,

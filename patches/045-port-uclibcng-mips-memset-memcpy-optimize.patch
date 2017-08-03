@@ -1,0 +1,2103 @@
+diff --git a/./toolchain/musl/patches/931-add-mips-includes.patch b/./toolchain/musl/patches/931-add-mips-includes.patch
+new file mode 100644
+index 0000000..6aa762a
+--- /dev/null
++++ b/./toolchain/musl/patches/931-add-mips-includes.patch
+@@ -0,0 +1,778 @@
++--- /dev/null	2017-07-20 19:24:25.199443521 +0800
+++++ b/include/sys/asm.h	2017-07-20 19:56:14.000000000 +0800
++@@ -0,0 +1,497 @@
+++/* Copyright (C) 1997, 1998, 2002, 2003 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++   Contributed by Ralf Baechle <ralf@gnu.org>.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library; if not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifndef _SYS_ASM_H
+++#define _SYS_ASM_H
+++
+++#include <sys/sgidefs.h>
+++
+++#ifndef CAT
+++# ifdef __STDC__
+++#  define __CAT(str1,str2) str1##str2
+++# else
+++#  define __CAT(str1,str2) str1/**/str2
+++# endif
+++# define CAT(str1,str2) __CAT(str1,str2)
+++#endif
+++
+++/*
+++ * Macros to handle different pointer/register sizes for 32/64-bit code
+++ *
+++ * 64 bit address space isn't used yet, so we may use the R3000 32 bit
+++ * defines for now.
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32) || (_MIPS_SIM == _MIPS_SIM_NABI32)
+++# define PTR .word
+++# define PTRSIZE 4
+++# define PTRLOG 2
+++#elif (_MIPS_SIM == _MIPS_SIM_ABI64)
+++# define PTR .dword
+++# define PTRSIZE 8
+++# define PTRLOG 3
+++#endif
+++
+++/*
+++ * PIC specific declarations
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32)
+++# ifdef __PIC__
+++#  define CPRESTORE(register) \
+++		.cprestore register
+++#  define CPLOAD(register) \
+++		.cpload register
+++# else
+++#  define CPRESTORE(register)
+++#  define CPLOAD(register)
+++# endif
+++
+++# define CPADD(register) \
+++		.cpadd	register
+++
+++/*
+++ * Set gp when at 1st instruction
+++ */
+++# define SETUP_GP					\
+++		.set noreorder;				\
+++		.cpload $25;				\
+++		.set reorder
+++/* Set gp when not at 1st instruction */
+++# define SETUP_GPX(r)					\
+++		.set noreorder;				\
+++		move r, $31;	 /* Save old ra.  */	\
+++		bal 10f; /* Find addr of cpload.  */	\
+++		nop;					\
+++10:							\
+++		.cpload $31;				\
+++		move $31, r;				\
+++		.set reorder
+++# define SETUP_GPX_L(r, l)				\
+++		.set noreorder;				\
+++		move r, $31;	 /* Save old ra.  */	\
+++		bal l;   /* Find addr of cpload.  */	\
+++		nop;					\
+++l:							\
+++		.cpload $31;				\
+++		move $31, r;				\
+++		.set reorder
+++# define SAVE_GP(x) \
+++		.cprestore x /* Save gp trigger t9/jalr conversion.	 */
+++# define SETUP_GP64(a, b)
+++# define SETUP_GPX64(a, b)
+++# define SETUP_GPX64_L(cp_reg, ra_save, l)
+++# define RESTORE_GP64
+++# define USE_ALT_CP(a)
+++# define L(label) $L ## label
+++#else /* (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32) */
+++/*
+++ * For callee-saved gp calling convention:
+++ */
+++# define SETUP_GP
+++# define SETUP_GPX(r)
+++# define SETUP_GPX_L(r, l)
+++# define SAVE_GP(x)
+++
+++# define SETUP_GP64(gpoffset, proc) \
+++		.cpsetup $25, gpoffset, proc
+++# define SETUP_GPX64(cp_reg, ra_save)			\
+++		move ra_save, $31; /* Save old ra.  */	\
+++		.set noreorder;				\
+++		bal 10f; /* Find addr of .cpsetup.  */	\
+++		nop;					\
+++10:							\
+++		.set reorder;				\
+++		.cpsetup $31, cp_reg, 10b;		\
+++		move $31, ra_save
+++# define SETUP_GPX64_L(cp_reg, ra_save, l)  \
+++		move ra_save, $31; /* Save old ra.  */	\
+++		.set noreorder;				\
+++		bal l;   /* Find addr of .cpsetup.  */	\
+++		nop;					\
+++l:							\
+++		.set reorder;				\
+++		.cpsetup $31, cp_reg, l;		\
+++		move $31, ra_save
+++# define RESTORE_GP64 \
+++		.cpreturn
+++/* Use alternate register for context pointer.  */
+++# define USE_ALT_CP(reg)	\
+++		.cplocal reg
+++# define L(label) .L ## label
+++#endif /* _MIPS_SIM != _MIPS_SIM_ABI32 */
+++
+++/*
+++ * Stack Frame Definitions
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32)
+++# define NARGSAVE 4 /* Space for 4 argument registers must be allocated.  */
+++#endif
+++#if (_MIPS_SIM == _MIPS_SIM_ABI64 || _MIPS_SIM == _MIPS_SIM_NABI32)
+++# define NARGSAVE 0 /* No caller responsibilities.  */
+++#endif
+++
+++
+++/*
+++ * LEAF - declare leaf routine
+++ */
+++#define	LEAF(symbol)                                    \
+++		.globl	symbol;                         \
+++		.align	2;                              \
+++		.type	symbol,@function;               \
+++		.ent	symbol,0;                       \
+++symbol:		.frame	sp,0,ra
+++
+++/*
+++ * NESTED - declare nested routine entry point
+++ */
+++#define	NESTED(symbol, framesize, rpc)                  \
+++		.globl	symbol;                         \
+++		.align	2;                              \
+++		.type	symbol,@function;               \
+++		.ent	symbol,0;                       \
+++symbol:		.frame	sp, framesize, rpc
+++
+++/*
+++ * END - mark end of function
+++ */
+++#ifndef END
+++# define END(function)                                   \
+++		.end	function;		        \
+++		.size	function,.-function
+++#endif
+++
+++/*
+++ * EXPORT - export definition of symbol
+++ */
+++#define	EXPORT(symbol)                                  \
+++		.globl	symbol;                         \
+++symbol:
+++
+++/*
+++ * ABS - export absolute symbol
+++ */
+++#define	ABS(symbol,value)                               \
+++		.globl	symbol;                         \
+++symbol		=	value
+++
+++#define	PANIC(msg)                                      \
+++		.set	push;				\
+++		.set	reorder;                        \
+++		la	a0,8f;                          \
+++		jal	panic;                          \
+++9:		b	9b;                             \
+++		.set	pop;				\
+++		TEXT(msg)
+++
+++/*
+++ * Print formated string
+++ */
+++#define PRINT(string)                                   \
+++		.set	push;				\
+++		.set	reorder;                        \
+++		la	a0,8f;                          \
+++		jal	printk;                         \
+++		.set	pop;				\
+++		TEXT(string)
+++
+++#define	TEXT(msg)                                       \
+++		.data;                                  \
+++8:		.asciiz	msg;                            \
+++		.previous;
+++
+++/*
+++ * Build text tables
+++ */
+++#define TTABLE(string)                                  \
+++		.text;                                  \
+++		.word	1f;                             \
+++		.previous;                              \
+++		.data;                                  \
+++1:		.asciz	string;                         \
+++		.previous
+++
+++/*
+++ * MIPS IV pref instruction.
+++ * Use with .set noreorder only!
+++ *
+++ * MIPS IV implementations are free to treat this as a nop.  The R5000
+++ * is one of them.  So we should have an option not to use this instruction.
+++ */
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5) || \
+++    (_MIPS_ISA == _MIPS_ISA_MIPS32) || (_MIPS_ISA == _MIPS_ISA_MIPS64)
+++# define PREF(hint,addr)                                 \
+++		pref	hint,addr
+++# define PREFX(hint,addr)                                \
+++		prefx	hint,addr
+++#else
+++# define PREF
+++# define PREFX
+++#endif
+++
+++/*
+++ * MIPS ISA IV/V movn/movz instructions and equivalents for older CPUs.
+++ */
+++#if _MIPS_ISA == _MIPS_ISA_MIPS1
+++# define MOVN(rd,rs,rt)					\
+++		.set	push;				\
+++		.set	reorder;			\
+++		beqz	rt,9f;				\
+++		move	rd,rs;				\
+++		.set	pop;				\
+++9:
+++# define MOVZ(rd,rs,rt)					\
+++		.set	push;				\
+++		.set	reorder;			\
+++		bnez	rt,9f;				\
+++		move	rd,rt;				\
+++		.set	pop;				\
+++9:
+++#endif /* _MIPS_ISA == _MIPS_ISA_MIPS1 */
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3)
+++# define MOVN(rd,rs,rt)					\
+++		.set	push;				\
+++		.set	noreorder;			\
+++		bnezl	rt,9f;				\
+++		move	rd,rs;				\
+++		.set	pop;				\
+++9:
+++# define MOVZ(rd,rs,rt)					\
+++		.set	push;				\
+++		.set	noreorder;			\
+++		beqzl	rt,9f;				\
+++		movz	rd,rs;				\
+++		.set	pop;				\
+++9:
+++#endif /* (_MIPS_ISA == _MIPS_ISA_MIPS2) || (_MIPS_ISA == _MIPS_ISA_MIPS3) */
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5) || \
+++    (_MIPS_ISA == _MIPS_ISA_MIPS32) || (_MIPS_ISA == _MIPS_ISA_MIPS64)
+++# define MOVN(rd,rs,rt)					\
+++		movn	rd,rs,rt
+++# define MOVZ(rd,rs,rt)					\
+++		movz	rd,rs,rt
+++#endif /* (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5) */
+++
+++/*
+++ * Stack alignment
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
+++# define ALSZ	15
+++# define ALMASK	~15
+++#else
+++# define ALSZ	7
+++# define ALMASK	~7
+++#endif
+++
+++/*
+++ * Size of a register
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI64) || (_MIPS_SIM == _MIPS_SIM_NABI32)
+++# define SZREG	8
+++#else
+++# define SZREG	4
+++#endif
+++
+++/*
+++ * Use the following macros in assemblercode to load/store registers,
+++ * pointers etc.
+++ */
+++#if (SZREG == 4)
+++# define REG_S sw
+++# define REG_L lw
+++#else
+++# define REG_S sd
+++# define REG_L ld
+++#endif
+++
+++/*
+++ * How to add/sub/load/store/shift C int variables.
+++ */
+++#if (_MIPS_SZINT == 32)
+++# define INT_ADD	add
+++# define INT_ADDI	addi
+++# define INT_ADDU	addu
+++# define INT_ADDIU	addiu
+++# define INT_SUB	sub
+++# define INT_SUBI	subi
+++# define INT_SUBU	subu
+++# define INT_SUBIU	subu
+++# define INT_L		lw
+++# define INT_S		sw
+++#endif
+++
+++#if (_MIPS_SZINT == 64)
+++# define INT_ADD	dadd
+++# define INT_ADDI	daddi
+++# define INT_ADDU	daddu
+++# define INT_ADDIU	daddiu
+++# define INT_SUB	dsub
+++# define INT_SUBI	dsubi
+++# define INT_SUBU	dsubu
+++# define INT_SUBIU	dsubu
+++# define INT_L		ld
+++# define INT_S		sd
+++#endif
+++
+++/*
+++ * How to add/sub/load/store/shift C long variables.
+++ */
+++#if (_MIPS_SZLONG == 32)
+++# define LONG_ADD	add
+++# define LONG_ADDI	addi
+++# define LONG_ADDU	addu
+++# define LONG_ADDIU	addiu
+++# define LONG_SUB	sub
+++# define LONG_SUBI	subi
+++# define LONG_SUBU	subu
+++# define LONG_SUBIU	subu
+++# define LONG_L		lw
+++# define LONG_S		sw
+++# define LONG_SLL	sll
+++# define LONG_SLLV	sllv
+++# define LONG_SRL	srl
+++# define LONG_SRLV	srlv
+++# define LONG_SRA	sra
+++# define LONG_SRAV	srav
+++#endif
+++
+++#if (_MIPS_SZLONG == 64)
+++# define LONG_ADD	dadd
+++# define LONG_ADDI	daddi
+++# define LONG_ADDU	daddu
+++# define LONG_ADDIU	daddiu
+++# define LONG_SUB	dsub
+++# define LONG_SUBI	dsubi
+++# define LONG_SUBU	dsubu
+++# define LONG_SUBIU	dsubu
+++# define LONG_L		ld
+++# define LONG_S		sd
+++# define LONG_SLL	dsll
+++# define LONG_SLLV	dsllv
+++# define LONG_SRL	dsrl
+++# define LONG_SRLV	dsrlv
+++# define LONG_SRA	dsra
+++# define LONG_SRAV	dsrav
+++#endif
+++
+++/*
+++ * How to add/sub/load/store/shift pointers.
+++ */
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32 && _MIPS_SZPTR == 32)
+++# define PTR_ADD	add
+++# define PTR_ADDI	addi
+++# define PTR_ADDU	addu
+++# define PTR_ADDIU	addiu
+++# define PTR_SUB	sub
+++# define PTR_SUBI	subi
+++# define PTR_SUBU	subu
+++# define PTR_SUBIU	subu
+++# define PTR_L		lw
+++# define PTR_LA		la
+++# define PTR_S		sw
+++# define PTR_SLL	sll
+++# define PTR_SLLV	sllv
+++# define PTR_SRL	srl
+++# define PTR_SRLV	srlv
+++# define PTR_SRA	sra
+++# define PTR_SRAV	srav
+++
+++# define PTR_SCALESHIFT	2
+++#endif
+++
+++#if _MIPS_SIM == _MIPS_SIM_NABI32
+++# define PTR_ADD	add
+++# define PTR_ADDI	addi
+++# define PTR_SUB	sub
+++# define PTR_SUBI	subi
+++#if !defined __mips_isa_rev || __mips_isa_rev < 6
+++# define PTR_ADDU	add /* no u */
+++# define PTR_ADDIU	addi /* no u */
+++# define PTR_SUBU	sub /* no u */
+++# define PTR_SUBIU	sub /* no u */
+++#else
+++# define PTR_ADDU       addu
+++# define PTR_ADDIU      addiu
+++# define PTR_SUBU       subu
+++# define PTR_SUBIU      subu
+++#endif
+++# define PTR_L		lw
+++# define PTR_LA		la
+++# define PTR_S		sw
+++# define PTR_SLL	sll
+++# define PTR_SLLV	sllv
+++# define PTR_SRL	srl
+++# define PTR_SRLV	srlv
+++# define PTR_SRA	sra
+++# define PTR_SRAV	srav
+++
+++# define PTR_SCALESHIFT	2
+++#endif
+++
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32 && _MIPS_SZPTR == 64 /* o64??? */) \
+++    || _MIPS_SIM == _MIPS_SIM_ABI64
+++# define PTR_ADD	dadd
+++# define PTR_ADDI	daddi
+++# define PTR_ADDU	daddu
+++# define PTR_ADDIU	daddiu
+++# define PTR_SUB	dsub
+++# define PTR_SUBI	dsubi
+++# define PTR_SUBU	dsubu
+++# define PTR_SUBIU	dsubu
+++# define PTR_L		ld
+++# define PTR_LA		dla
+++# define PTR_S		sd
+++# define PTR_SLL	dsll
+++# define PTR_SLLV	dsllv
+++# define PTR_SRL	dsrl
+++# define PTR_SRLV	dsrlv
+++# define PTR_SRA	dsra
+++# define PTR_SRAV	dsrav
+++
+++# define PTR_SCALESHIFT	3
+++#endif
+++
+++/*
+++ * Some cp0 registers were extended to 64bit for MIPS III.
+++ */
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS1) || (_MIPS_ISA == _MIPS_ISA_MIPS2) || \
+++    (_MIPS_ISA == _MIPS_ISA_MIPS32)
+++# define MFC0	mfc0
+++# define MTC0	mtc0
+++#endif
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS3) || (_MIPS_ISA == _MIPS_ISA_MIPS4) || \
+++    (_MIPS_ISA == _MIPS_ISA_MIPS5) || (_MIPS_ISA == _MIPS_ISA_MIPS64)
+++# define MFC0	dmfc0
+++# define MTC0	dmtc0
+++#endif
+++
+++/* The MIPS archtectures do not have a uniform memory model.  Particular
+++   platforms may provide additional guarantees - for instance, the R4000
+++   LL and SC instructions implicitly perform a SYNC, and the 4K promises
+++   strong ordering.
+++
+++   However, in the absence of those guarantees, we must assume weak ordering
+++   and SYNC explicitly where necessary.
+++
+++   Some obsolete MIPS processors may not support the SYNC instruction.  This
+++   applies to "true" MIPS I processors; most of the processors which compile
+++   using MIPS I implement parts of MIPS II.  */
+++
+++#ifndef MIPS_SYNC
+++# define MIPS_SYNC      sync
+++#endif
+++
+++#endif /* sys/asm.h */
++--- /dev/null	2017-07-20 19:24:25.199443521 +0800
+++++ b/include/sys/fpregdef.h	2017-07-20 19:56:14.000000000 +0800
++@@ -0,0 +1,116 @@
+++/* Copyright (C) 1991-2015 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library.  If not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifndef _SYS_FPREGDEF_H
+++#define _SYS_FPREGDEF_H
+++
+++/* Commonalities first, individualities next...  */
+++
+++#define fv0	$f0	/* return value */
+++#define fv1	$f2
+++
+++#if _MIPS_SIM == _ABIO32 || _MIPS_SIM == _ABIN32
+++#define fs0	$f20	/* callee saved */
+++#define fs1	$f22
+++#define fs2	$f24
+++#define fs3	$f26
+++#define fs4	$f28
+++#define fs5	$f30
+++#endif /* _MIPS_SIM == _ABIO32 || _MIPS_SIM == _ABIN32 */
+++
+++#if _MIPS_SIM == _ABI64 || _MIPS_SIM == _ABIN32
+++#define fa0	$f12	/* argument registers */
+++#define fa1	$f13
+++#define fa2	$f14
+++#define fa3	$f15
+++#define fa4	$f16
+++#define fa5	$f17
+++#define fa6	$f18
+++#define fa7	$f19
+++
+++#define ft0	$f4	/* caller saved */
+++#define ft1	$f5
+++#define ft2	$f6
+++#define ft3	$f7
+++#define ft4	$f8
+++#define ft5	$f9
+++#define ft6	$f10
+++#define ft7	$f11
+++#endif /* _MIPS_SIM == _ABI64 || _MIPS_SIM == _ABIN32 */
+++
+++#if _MIPS_SIM == _ABIO32
+++#define fv0f	$f1	/* return value, high part */
+++#define fv1f	$f3
+++
+++#define fa0	$f12	/* argument registers */
+++#define fa0f	$f13
+++#define fa1	$f14
+++#define fa1f	$f15
+++
+++#define ft0	$f4	/* caller saved */
+++#define ft0f	$f5
+++#define ft1	$f6
+++#define ft1f	$f7
+++#define ft2	$f8
+++#define ft2f	$f9
+++#define ft3	$f10
+++#define ft3f	$f11
+++#define ft4	$f16
+++#define ft4f	$f17
+++#define ft5	$f18
+++#define ft5f	$f19
+++
+++#define fs0f	$f21	/* callee saved, high part */
+++#define fs1f	$f23
+++#define fs2f	$f25
+++#define fs3f	$f27
+++#define fs4f	$f29
+++#define fs5f	$f31
+++#endif /* _MIPS_SIM == _ABIO32 */
+++
+++#if _MIPS_SIM == _ABI64
+++#define ft8	$f20	/* caller saved */
+++#define ft9	$f21
+++#define ft10	$f22
+++#define ft11	$f23
+++#define ft12	$f1
+++#define ft13	$f3
+++
+++#define fs0	$f24	/* callee saved */
+++#define fs1	$f25
+++#define fs2	$f26
+++#define fs3	$f27
+++#define fs4	$f28
+++#define fs5	$f29
+++#define fs6	$f30
+++#define fs7	$f31
+++#endif /* _MIPS_SIM == _ABI64 */
+++
+++#if _MIPS_SIM == _ABIN32
+++#define ft8	$f21	/* caller saved */
+++#define ft9	$f23
+++#define ft10	$f25
+++#define ft11	$f27
+++#define ft12	$f29
+++#define ft13	$f31
+++#define ft14	$f1
+++#define ft15	$f3
+++#endif /* _MIPS_SIM == _ABIN32 */
+++
+++#define fcr31	$31	/* FPU status register */
+++
+++#endif /* sys/fpregdef.h */
++--- /dev/null	2017-07-20 19:24:25.199443521 +0800
+++++ b/include/sys/regdef.h	2017-07-20 19:56:14.000000000 +0800
++@@ -0,0 +1,81 @@
+++/* Copyright (C) 1997, 1998, 2002, 2003 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++   Contributed by Ralf Baechle <ralf@gnu.org>.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library; if not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifndef _SYS_REGDEF_H
+++#define _SYS_REGDEF_H
+++
+++#include <sys/sgidefs.h>
+++
+++/*
+++ * Symbolic register names for 32 bit ABI
+++ */
+++#define zero    $0      /* wired zero */
+++#define AT      $1      /* assembler temp  - uppercase because of ".set at" */
+++#define v0      $2      /* return value */
+++#define v1      $3
+++#define a0      $4      /* argument registers */
+++#define a1      $5
+++#define a2      $6
+++#define a3      $7
+++#if _MIPS_SIM != _MIPS_SIM_ABI32
+++#define a4      $8
+++#define a5      $9
+++#define a6      $10
+++#define a7      $11
+++#define t0      $12
+++#define t1      $13
+++#define t2      $14
+++#define t3      $15
+++#define ta0     a4
+++#define ta1     a5
+++#define ta2     a6
+++#define ta3     a7
+++#else /* if _MIPS_SIM == _MIPS_SIM_ABI32 */
+++#define t0      $8      /* caller saved */
+++#define t1      $9
+++#define t2      $10
+++#define t3      $11
+++#define t4      $12
+++#define t5      $13
+++#define t6      $14
+++#define t7      $15
+++#define ta0     t4
+++#define ta1     t5
+++#define ta2     t6
+++#define ta3     t7
+++#endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
+++#define s0      $16     /* callee saved */
+++#define s1      $17
+++#define s2      $18
+++#define s3      $19
+++#define s4      $20
+++#define s5      $21
+++#define s6      $22
+++#define s7      $23
+++#define t8      $24     /* caller saved */
+++#define t9      $25
+++#define jp      $25     /* PIC jump register */
+++#define k0      $26     /* kernel scratch */
+++#define k1      $27
+++#define gp      $28     /* global pointer */
+++#define sp      $29     /* stack pointer */
+++#define fp      $30     /* frame pointer */
+++#define s8	$30	/* same like fp! */
+++#define ra      $31     /* return address */
+++
+++#endif /* _SYS_REGDEF_H */
++--- /dev/null	2017-07-20 19:24:25.199443521 +0800
+++++ b/include/sys/sgidefs.h	2017-07-20 19:56:14.000000000 +0800
++@@ -0,0 +1,72 @@
+++/* Copyright (C) 1996, 1997, 1998, 2003, 2004 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++   Contributed by Ralf Baechle <ralf@gnu.org>.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library; if not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifndef _SGIDEFS_H
+++#define _SGIDEFS_H	1
+++
+++/*
+++ * A crude hack to stop <asm/sgidefs.h>
+++ */
+++#undef __ASM_SGIDEFS_H
+++#define __ASM_SGIDEFS_H
+++
+++/*
+++ * And remove any damage it might have already done
+++ */
+++#undef _MIPS_ISA_MIPS1
+++#undef _MIPS_ISA_MIPS2
+++#undef _MIPS_ISA_MIPS3
+++#undef _MIPS_ISA_MIPS4
+++#undef _MIPS_ISA_MIPS5
+++#undef _MIPS_ISA_MIPS32
+++#undef _MIPS_ISA_MIPS64
+++
+++#undef _MIPS_SIM_ABI32
+++#undef _MIPS_SIM_NABI32
+++#undef _MIPS_SIM_ABI64
+++
+++/*
+++ * Definitions for the ISA level
+++ */
+++#define _MIPS_ISA_MIPS1 1
+++#define _MIPS_ISA_MIPS2 2
+++#define _MIPS_ISA_MIPS3 3
+++#define _MIPS_ISA_MIPS4 4
+++#define _MIPS_ISA_MIPS5 5
+++#define _MIPS_ISA_MIPS32 6
+++#define _MIPS_ISA_MIPS64 7
+++
+++/*
+++ * Subprogram calling convention
+++ */
+++#ifndef _ABIO32
+++# define _ABIO32		1
+++#endif
+++#define _MIPS_SIM_ABI32		_ABIO32
+++
+++#ifndef _ABIN32
+++# define _ABIN32		2
+++#endif
+++#define _MIPS_SIM_NABI32	_ABIN32
+++
+++#ifndef _ABI64
+++# define _ABI64			3
+++#endif
+++#define _MIPS_SIM_ABI64		_ABI64
+++
+++#endif /* sgidefs.h */
+diff --git a/./toolchain/musl/patches/932-add-mips-memcpy-memset-optimize.patch b/./toolchain/musl/patches/932-add-mips-memcpy-memset-optimize.patch
+new file mode 100644
+index 0000000..32e6df4
+--- /dev/null
++++ b/./toolchain/musl/patches/932-add-mips-memcpy-memset-optimize.patch
+@@ -0,0 +1,1313 @@
++--- /dev/null	2017-07-21 19:16:52.719374444 +0800
+++++ b/src/string/mips/memcpy.S	2017-07-21 22:02:31.953862010 +0800
++@@ -0,0 +1,874 @@
+++/* Copyright (C) 2012-2015 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library.  If not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifdef ANDROID_CHANGES
+++# include "machine/asm.h"
+++# include "machine/regdef.h"
+++# define USE_MEMMOVE_FOR_OVERLAP
+++# define PREFETCH_LOAD_HINT PREFETCH_HINT_LOAD_STREAMED
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#elif _LIBC
+++# include <sysdep.h>
+++# include <sys/regdef.h>
+++# include <sys/asm.h>
+++# define PREFETCH_LOAD_HINT PREFETCH_HINT_LOAD_STREAMED
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#elif defined _COMPILING_NEWLIB
+++# include "machine/asm.h"
+++# include "machine/regdef.h"
+++# define PREFETCH_LOAD_HINT PREFETCH_HINT_LOAD_STREAMED
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#else
+++# define USE_PREFETCH
+++# include <sys/fpregdef.h>
+++# include <sys/regdef.h>
+++# include <sys/asm.h>
+++#endif
+++
+++#if (_MIPS_ISA == _MIPS_ISA_MIPS4) || (_MIPS_ISA == _MIPS_ISA_MIPS5) || \
+++    (_MIPS_ISA == _MIPS_ISA_MIPS32) || (_MIPS_ISA == _MIPS_ISA_MIPS64)
+++# ifdef __UCLIBC_USE_MIPS_PREFETCH__
+++#  define USE_PREFETCH
+++# endif
+++#endif
+++
+++#if defined(_MIPS_SIM) && ((_MIPS_SIM == _ABI64) || (_MIPS_SIM == _ABIN32))
+++# ifndef DISABLE_DOUBLE
+++#  define USE_DOUBLE
+++# endif
+++#endif
+++
+++/* Some asm.h files do not have the L macro definition.  */
+++#ifndef L
+++# if _MIPS_SIM == _ABIO32
+++#  define L(label) $L ## label
+++# else
+++#  define L(label) .L ## label
+++# endif
+++#endif
+++
+++/* Some asm.h files do not have the PTR_ADDIU macro definition.  */
+++#ifndef PTR_ADDIU
+++# ifdef USE_DOUBLE
+++#  define PTR_ADDIU	daddiu
+++# else
+++#  define PTR_ADDIU	addiu
+++# endif
+++#endif
+++
+++/* Some asm.h files do not have the PTR_SRA macro definition.  */
+++#ifndef PTR_SRA
+++# ifdef USE_DOUBLE
+++#  define PTR_SRA		dsra
+++# else
+++#  define PTR_SRA		sra
+++# endif
+++#endif
+++
+++/* New R6 instructions that may not be in asm.h.  */
+++#ifndef PTR_LSA
+++# if _MIPS_SIM == _ABI64
+++#  define PTR_LSA	dlsa
+++# else
+++#  define PTR_LSA	lsa
+++# endif
+++#endif
+++
+++/*
+++ * Using PREFETCH_HINT_LOAD_STREAMED instead of PREFETCH_LOAD on load
+++ * prefetches appears to offer a slight preformance advantage.
+++ *
+++ * Using PREFETCH_HINT_PREPAREFORSTORE instead of PREFETCH_STORE
+++ * or PREFETCH_STORE_STREAMED offers a large performance advantage
+++ * but PREPAREFORSTORE has some special restrictions to consider.
+++ *
+++ * Prefetch with the 'prepare for store' hint does not copy a memory
+++ * location into the cache, it just allocates a cache line and zeros
+++ * it out.  This means that if you do not write to the entire cache
+++ * line before writing it out to memory some data will get zero'ed out
+++ * when the cache line is written back to memory and data will be lost.
+++ *
+++ * Also if you are using this memcpy to copy overlapping buffers it may
+++ * not behave correctly when using the 'prepare for store' hint.  If you
+++ * use the 'prepare for store' prefetch on a memory area that is in the
+++ * memcpy source (as well as the memcpy destination), then you will get
+++ * some data zero'ed out before you have a chance to read it and data will
+++ * be lost.
+++ *
+++ * If you are going to use this memcpy routine with the 'prepare for store'
+++ * prefetch you may want to set USE_MEMMOVE_FOR_OVERLAP in order to avoid
+++ * the problem of running memcpy on overlapping buffers.
+++ *
+++ * There are ifdef'ed sections of this memcpy to make sure that it does not
+++ * do prefetches on cache lines that are not going to be completely written.
+++ * This code is only needed and only used when PREFETCH_STORE_HINT is set to
+++ * PREFETCH_HINT_PREPAREFORSTORE.  This code assumes that cache lines are
+++ * 32 bytes and if the cache line is larger it will not work correctly.
+++ */
+++
+++#ifdef USE_PREFETCH
+++# define PREFETCH_HINT_LOAD		0
+++# define PREFETCH_HINT_STORE		1
+++# define PREFETCH_HINT_LOAD_STREAMED	4
+++# define PREFETCH_HINT_STORE_STREAMED	5
+++# define PREFETCH_HINT_LOAD_RETAINED	6
+++# define PREFETCH_HINT_STORE_RETAINED	7
+++# define PREFETCH_HINT_WRITEBACK_INVAL	25
+++# define PREFETCH_HINT_PREPAREFORSTORE	30
+++
+++/*
+++ * If we have not picked out what hints to use at this point use the
+++ * standard load and store prefetch hints.
+++ */
+++# ifndef PREFETCH_STORE_HINT
+++#  define PREFETCH_STORE_HINT PREFETCH_HINT_STORE
+++# endif
+++# ifndef PREFETCH_LOAD_HINT
+++#  define PREFETCH_LOAD_HINT PREFETCH_HINT_LOAD
+++# endif
+++
+++/*
+++ * We double everything when USE_DOUBLE is true so we do 2 prefetches to
+++ * get 64 bytes in that case.  The assumption is that each individual
+++ * prefetch brings in 32 bytes.
+++ */
+++
+++# ifdef USE_DOUBLE
+++#  define PREFETCH_CHUNK 64
+++#  define PREFETCH_FOR_LOAD(chunk, reg) \
+++ pref PREFETCH_LOAD_HINT, (chunk)*64(reg); \
+++ pref PREFETCH_LOAD_HINT, ((chunk)*64)+32(reg)
+++#  define PREFETCH_FOR_STORE(chunk, reg) \
+++ pref PREFETCH_STORE_HINT, (chunk)*64(reg); \
+++ pref PREFETCH_STORE_HINT, ((chunk)*64)+32(reg)
+++# else
+++#  define PREFETCH_CHUNK 32
+++#  define PREFETCH_FOR_LOAD(chunk, reg) \
+++ pref PREFETCH_LOAD_HINT, (chunk)*32(reg)
+++#  define PREFETCH_FOR_STORE(chunk, reg) \
+++ pref PREFETCH_STORE_HINT, (chunk)*32(reg)
+++# endif
+++/* MAX_PREFETCH_SIZE is the maximum size of a prefetch, it must not be less
+++ * than PREFETCH_CHUNK, the assumed size of each prefetch.  If the real size
+++ * of a prefetch is greater than MAX_PREFETCH_SIZE and the PREPAREFORSTORE
+++ * hint is used, the code will not work correctly.  If PREPAREFORSTORE is not
+++ * used then MAX_PREFETCH_SIZE does not matter.  */
+++# define MAX_PREFETCH_SIZE 128
+++/* PREFETCH_LIMIT is set based on the fact that we never use an offset greater
+++ * than 5 on a STORE prefetch and that a single prefetch can never be larger
+++ * than MAX_PREFETCH_SIZE.  We add the extra 32 when USE_DOUBLE is set because
+++ * we actually do two prefetches in that case, one 32 bytes after the other.  */
+++# ifdef USE_DOUBLE
+++#  define PREFETCH_LIMIT (5 * PREFETCH_CHUNK) + 32 + MAX_PREFETCH_SIZE
+++# else
+++#  define PREFETCH_LIMIT (5 * PREFETCH_CHUNK) + MAX_PREFETCH_SIZE
+++# endif
+++# if (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE) \
+++    && ((PREFETCH_CHUNK * 4) < MAX_PREFETCH_SIZE)
+++/* We cannot handle this because the initial prefetches may fetch bytes that
+++ * are before the buffer being copied.  We start copies with an offset
+++ * of 4 so avoid this situation when using PREPAREFORSTORE.  */
+++#error "PREFETCH_CHUNK is too large and/or MAX_PREFETCH_SIZE is too small."
+++# endif
+++#else /* USE_PREFETCH not defined */
+++# define PREFETCH_FOR_LOAD(offset, reg)
+++# define PREFETCH_FOR_STORE(offset, reg)
+++#endif
+++
+++#if __mips_isa_rev > 5
+++# if (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++#  undef PREFETCH_STORE_HINT
+++#  define PREFETCH_STORE_HINT PREFETCH_HINT_STORE_STREAMED
+++# endif
+++# define R6_CODE
+++#endif
+++
+++/* Allow the routine to be named something else if desired.  */
+++#ifndef MEMCPY_NAME
+++# define MEMCPY_NAME memcpy
+++#endif
+++
+++/* We use these 32/64 bit registers as temporaries to do the copying.  */
+++#define REG0 t0
+++#define REG1 t1
+++#define REG2 t2
+++#define REG3 t3
+++#if defined(_MIPS_SIM) && ((_MIPS_SIM == _ABIO32) || (_MIPS_SIM == _ABIO64))
+++# define REG4 t4
+++# define REG5 t5
+++# define REG6 t6
+++# define REG7 t7
+++#else
+++# define REG4 ta0
+++# define REG5 ta1
+++# define REG6 ta2
+++# define REG7 ta3
+++#endif
+++
+++/* We load/store 64 bits at a time when USE_DOUBLE is true.
+++ * The C_ prefix stands for CHUNK and is used to avoid macro name
+++ * conflicts with system header files.  */
+++
+++#ifdef USE_DOUBLE
+++# define C_ST	sd
+++# define C_LD	ld
+++# ifdef __MIPSEB
+++#  define C_LDHI	ldl	/* high part is left in big-endian	*/
+++#  define C_STHI	sdl	/* high part is left in big-endian	*/
+++#  define C_LDLO	ldr	/* low part is right in big-endian	*/
+++#  define C_STLO	sdr	/* low part is right in big-endian	*/
+++# else
+++#  define C_LDHI	ldr	/* high part is right in little-endian	*/
+++#  define C_STHI	sdr	/* high part is right in little-endian	*/
+++#  define C_LDLO	ldl	/* low part is left in little-endian	*/
+++#  define C_STLO	sdl	/* low part is left in little-endian	*/
+++# endif
+++# define C_ALIGN	dalign	/* r6 align instruction			*/
+++#else
+++# define C_ST	sw
+++# define C_LD	lw
+++# ifdef __MIPSEB
+++#  define C_LDHI	lwl	/* high part is left in big-endian	*/
+++#  define C_STHI	swl	/* high part is left in big-endian	*/
+++#  define C_LDLO	lwr	/* low part is right in big-endian	*/
+++#  define C_STLO	swr	/* low part is right in big-endian	*/
+++# else
+++#  define C_LDHI	lwr	/* high part is right in little-endian	*/
+++#  define C_STHI	swr	/* high part is right in little-endian	*/
+++#  define C_LDLO	lwl	/* low part is left in little-endian	*/
+++#  define C_STLO	swl	/* low part is left in little-endian	*/
+++# endif
+++# define C_ALIGN	align	/* r6 align instruction			*/
+++#endif
+++
+++/* Bookkeeping values for 32 vs. 64 bit mode.  */
+++#ifdef USE_DOUBLE
+++# define NSIZE 8
+++# define NSIZEMASK 0x3f
+++# define NSIZEDMASK 0x7f
+++#else
+++# define NSIZE 4
+++# define NSIZEMASK 0x1f
+++# define NSIZEDMASK 0x3f
+++#endif
+++#define UNIT(unit) ((unit)*NSIZE)
+++#define UNITM1(unit) (((unit)*NSIZE)-1)
+++
+++#ifdef ANDROID_CHANGES
+++LEAF(MEMCPY_NAME, 0)
+++#else
+++LEAF(MEMCPY_NAME)
+++#endif
+++	.set	nomips16
+++	.set	noreorder
+++/*
+++ * Below we handle the case where memcpy is called with overlapping src and dst.
+++ * Although memcpy is not required to handle this case, some parts of Android
+++ * like Skia rely on such usage. We call memmove to handle such cases.
+++ */
+++#ifdef USE_MEMMOVE_FOR_OVERLAP
+++	PTR_SUBU t0,a0,a1
+++	PTR_SRA	t2,t0,31
+++	xor	t1,t0,t2
+++	PTR_SUBU t0,t1,t2
+++	sltu	t2,t0,a2
+++	beq	t2,zero,L(memcpy)
+++	la	t9,memmove
+++	jr	t9
+++	 nop
+++L(memcpy):
+++#endif
+++/*
+++ * If the size is less than 2*NSIZE (8 or 16), go to L(lastb).  Regardless of
+++ * size, copy dst pointer to v0 for the return value.
+++ */
+++	slti	t2,a2,(2 * NSIZE)
+++	bne	t2,zero,L(lasts)
+++#if defined(RETURN_FIRST_PREFETCH) || defined(RETURN_LAST_PREFETCH)
+++	move	v0,zero
+++#else
+++	move	v0,a0
+++#endif
+++
+++#ifndef R6_CODE
+++
+++/*
+++ * If src and dst have different alignments, go to L(unaligned), if they
+++ * have the same alignment (but are not actually aligned) do a partial
+++ * load/store to make them aligned.  If they are both already aligned
+++ * we can start copying at L(aligned).
+++ */
+++	xor	t8,a1,a0
+++	andi	t8,t8,(NSIZE-1)		/* t8 is a0/a1 word-displacement */
+++	bne	t8,zero,L(unaligned)
+++	PTR_SUBU a3, zero, a0
+++
+++	andi	a3,a3,(NSIZE-1)		/* copy a3 bytes to align a0/a1	  */
+++	beq	a3,zero,L(aligned)	/* if a3=0, it is already aligned */
+++	PTR_SUBU a2,a2,a3		/* a2 is the remining bytes count */
+++
+++	C_LDHI	t8,0(a1)
+++	PTR_ADDU a1,a1,a3
+++	C_STHI	t8,0(a0)
+++	PTR_ADDU a0,a0,a3
+++
+++#else /* R6_CODE */
+++
+++/*
+++ * Align the destination and hope that the source gets aligned too.  If it
+++ * doesn't we jump to L(r6_unaligned*) to do unaligned copies using the r6
+++ * align instruction.
+++ */
+++	andi	t8,a0,7
+++	lapc	t9,L(atable)
+++	PTR_LSA	t9,t8,t9,2
+++	jrc	t9
+++L(atable):
+++	bc	L(lb0)
+++	bc	L(lb7)
+++	bc	L(lb6)
+++	bc	L(lb5)
+++	bc	L(lb4)
+++	bc	L(lb3)
+++	bc	L(lb2)
+++	bc	L(lb1)
+++L(lb7):
+++	lb	a3, 6(a1)
+++	sb	a3, 6(a0)
+++L(lb6):
+++	lb	a3, 5(a1)
+++	sb	a3, 5(a0)
+++L(lb5):
+++	lb	a3, 4(a1)
+++	sb	a3, 4(a0)
+++L(lb4):
+++	lb	a3, 3(a1)
+++	sb	a3, 3(a0)
+++L(lb3):
+++	lb	a3, 2(a1)
+++	sb	a3, 2(a0)
+++L(lb2):
+++	lb	a3, 1(a1)
+++	sb	a3, 1(a0)
+++L(lb1):
+++	lb	a3, 0(a1)
+++	sb	a3, 0(a0)
+++
+++	li	t9,8
+++	subu	t8,t9,t8
+++	PTR_SUBU a2,a2,t8
+++	PTR_ADDU a0,a0,t8
+++	PTR_ADDU a1,a1,t8
+++L(lb0):
+++
+++	andi	t8,a1,(NSIZE-1)
+++	lapc	t9,L(jtable)
+++	PTR_LSA	t9,t8,t9,2
+++	jrc	t9
+++L(jtable):
+++        bc      L(aligned)
+++        bc      L(r6_unaligned1)
+++        bc      L(r6_unaligned2)
+++        bc      L(r6_unaligned3)
+++# ifdef USE_DOUBLE
+++        bc      L(r6_unaligned4)
+++        bc      L(r6_unaligned5)
+++        bc      L(r6_unaligned6)
+++        bc      L(r6_unaligned7)
+++# endif
+++#endif /* R6_CODE */
+++
+++L(aligned):
+++
+++/*
+++ * Now dst/src are both aligned to (word or double word) aligned addresses
+++ * Set a2 to count how many bytes we have to copy after all the 64/128 byte
+++ * chunks are copied and a3 to the dst pointer after all the 64/128 byte
+++ * chunks have been copied.  We will loop, incrementing a0 and a1 until a0
+++ * equals a3.
+++ */
+++
+++	andi	t8,a2,NSIZEDMASK /* any whole 64-byte/128-byte chunks? */
+++	beq	a2,t8,L(chkw)	 /* if a2==t8, no 64-byte/128-byte chunks */
+++	PTR_SUBU a3,a2,t8	 /* subtract from a2 the reminder */
+++	PTR_ADDU a3,a0,a3	 /* Now a3 is the final dst after loop */
+++
+++/* When in the loop we may prefetch with the 'prepare to store' hint,
+++ * in this case the a0+x should not be past the "t0-32" address.  This
+++ * means: for x=128 the last "safe" a0 address is "t0-160".  Alternatively,
+++ * for x=64 the last "safe" a0 address is "t0-96" In the current version we
+++ * will use "prefetch hint,128(a0)", so "t0-160" is the limit.
+++ */
+++#if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	PTR_ADDU t0,a0,a2		/* t0 is the "past the end" address */
+++	PTR_SUBU t9,t0,PREFETCH_LIMIT	/* t9 is the "last safe pref" address */
+++#endif
+++	PREFETCH_FOR_LOAD  (0, a1)
+++	PREFETCH_FOR_LOAD  (1, a1)
+++	PREFETCH_FOR_LOAD  (2, a1)
+++	PREFETCH_FOR_LOAD  (3, a1)
+++#if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT != PREFETCH_HINT_PREPAREFORSTORE)
+++	PREFETCH_FOR_STORE (1, a0)
+++	PREFETCH_FOR_STORE (2, a0)
+++	PREFETCH_FOR_STORE (3, a0)
+++#endif
+++#if defined(RETURN_FIRST_PREFETCH) && defined(USE_PREFETCH)
+++# if PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE
+++	sltu    v1,t9,a0
+++	bgtz    v1,L(skip_set)
+++	nop
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*4)
+++L(skip_set):
+++# else
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*1)
+++# endif
+++#endif
+++#if defined(RETURN_LAST_PREFETCH) && defined(USE_PREFETCH) \
+++    && (PREFETCH_STORE_HINT != PREFETCH_HINT_PREPAREFORSTORE)
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*3)
+++# ifdef USE_DOUBLE
+++	PTR_ADDIU v0,v0,32
+++# endif
+++#endif
+++L(loop16w):
+++	C_LD	t0,UNIT(0)(a1)
+++#if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	sltu	v1,t9,a0		/* If a0 > t9 don't use next prefetch */
+++	bgtz	v1,L(skip_pref)
+++#endif
+++	C_LD	t1,UNIT(1)(a1)
+++#ifdef R6_CODE
+++	PREFETCH_FOR_STORE (2, a0)
+++#else
+++	PREFETCH_FOR_STORE (4, a0)
+++	PREFETCH_FOR_STORE (5, a0)
+++#endif
+++#if defined(RETURN_LAST_PREFETCH) && defined(USE_PREFETCH)
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*5)
+++# ifdef USE_DOUBLE
+++	PTR_ADDIU v0,v0,32
+++# endif
+++#endif
+++L(skip_pref):
+++	C_LD	REG2,UNIT(2)(a1)
+++	C_LD	REG3,UNIT(3)(a1)
+++	C_LD	REG4,UNIT(4)(a1)
+++	C_LD	REG5,UNIT(5)(a1)
+++	C_LD	REG6,UNIT(6)(a1)
+++	C_LD	REG7,UNIT(7)(a1)
+++#ifdef R6_CODE
+++	PREFETCH_FOR_LOAD (3, a1)
+++#else
+++	PREFETCH_FOR_LOAD (4, a1)
+++#endif
+++	C_ST	t0,UNIT(0)(a0)
+++	C_ST	t1,UNIT(1)(a0)
+++	C_ST	REG2,UNIT(2)(a0)
+++	C_ST	REG3,UNIT(3)(a0)
+++	C_ST	REG4,UNIT(4)(a0)
+++	C_ST	REG5,UNIT(5)(a0)
+++	C_ST	REG6,UNIT(6)(a0)
+++	C_ST	REG7,UNIT(7)(a0)
+++
+++	C_LD	t0,UNIT(8)(a1)
+++	C_LD	t1,UNIT(9)(a1)
+++	C_LD	REG2,UNIT(10)(a1)
+++	C_LD	REG3,UNIT(11)(a1)
+++	C_LD	REG4,UNIT(12)(a1)
+++	C_LD	REG5,UNIT(13)(a1)
+++	C_LD	REG6,UNIT(14)(a1)
+++	C_LD	REG7,UNIT(15)(a1)
+++#ifndef R6_CODE
+++        PREFETCH_FOR_LOAD (5, a1)
+++#endif
+++	C_ST	t0,UNIT(8)(a0)
+++	C_ST	t1,UNIT(9)(a0)
+++	C_ST	REG2,UNIT(10)(a0)
+++	C_ST	REG3,UNIT(11)(a0)
+++	C_ST	REG4,UNIT(12)(a0)
+++	C_ST	REG5,UNIT(13)(a0)
+++	C_ST	REG6,UNIT(14)(a0)
+++	C_ST	REG7,UNIT(15)(a0)
+++	PTR_ADDIU a0,a0,UNIT(16)	/* adding 64/128 to dest */
+++	bne	a0,a3,L(loop16w)
+++	PTR_ADDIU a1,a1,UNIT(16)	/* adding 64/128 to src */
+++	move	a2,t8
+++
+++/* Here we have src and dest word-aligned but less than 64-bytes or
+++ * 128 bytes to go.  Check for a 32(64) byte chunk and copy if if there
+++ * is one.  Otherwise jump down to L(chk1w) to handle the tail end of
+++ * the copy.
+++ */
+++
+++L(chkw):
+++	PREFETCH_FOR_LOAD (0, a1)
+++	andi	t8,a2,NSIZEMASK	/* Is there a 32-byte/64-byte chunk.  */
+++				/* The t8 is the reminder count past 32-bytes */
+++	beq	a2,t8,L(chk1w)	/* When a2=t8, no 32-byte chunk  */
+++	nop
+++	C_LD	t0,UNIT(0)(a1)
+++	C_LD	t1,UNIT(1)(a1)
+++	C_LD	REG2,UNIT(2)(a1)
+++	C_LD	REG3,UNIT(3)(a1)
+++	C_LD	REG4,UNIT(4)(a1)
+++	C_LD	REG5,UNIT(5)(a1)
+++	C_LD	REG6,UNIT(6)(a1)
+++	C_LD	REG7,UNIT(7)(a1)
+++	PTR_ADDIU a1,a1,UNIT(8)
+++	C_ST	t0,UNIT(0)(a0)
+++	C_ST	t1,UNIT(1)(a0)
+++	C_ST	REG2,UNIT(2)(a0)
+++	C_ST	REG3,UNIT(3)(a0)
+++	C_ST	REG4,UNIT(4)(a0)
+++	C_ST	REG5,UNIT(5)(a0)
+++	C_ST	REG6,UNIT(6)(a0)
+++	C_ST	REG7,UNIT(7)(a0)
+++	PTR_ADDIU a0,a0,UNIT(8)
+++
+++/*
+++ * Here we have less than 32(64) bytes to copy.  Set up for a loop to
+++ * copy one word (or double word) at a time.  Set a2 to count how many
+++ * bytes we have to copy after all the word (or double word) chunks are
+++ * copied and a3 to the dst pointer after all the (d)word chunks have
+++ * been copied.  We will loop, incrementing a0 and a1 until a0 equals a3.
+++ */
+++L(chk1w):
+++	andi	a2,t8,(NSIZE-1)	/* a2 is the reminder past one (d)word chunks */
+++	beq	a2,t8,L(lastw)
+++	PTR_SUBU a3,t8,a2	/* a3 is count of bytes in one (d)word chunks */
+++	PTR_ADDU a3,a0,a3	/* a3 is the dst address after loop */
+++
+++/* copying in words (4-byte or 8-byte chunks) */
+++L(wordCopy_loop):
+++	C_LD	REG3,UNIT(0)(a1)
+++	PTR_ADDIU a0,a0,UNIT(1)
+++	PTR_ADDIU a1,a1,UNIT(1)
+++	bne	a0,a3,L(wordCopy_loop)
+++	C_ST	REG3,UNIT(-1)(a0)
+++
+++/* If we have been copying double words, see if we can copy a single word
+++   before doing byte copies.  We can have, at most, one word to copy.  */
+++
+++L(lastw):
+++#ifdef USE_DOUBLE
+++	andi    t8,a2,3		/* a2 is the remainder past 4 byte chunks.  */
+++	beq	t8,a2,L(lastb)
+++	move	a2,t8
+++	lw	REG3,0(a1)
+++	sw	REG3,0(a0)
+++	PTR_ADDIU a0,a0,4
+++	PTR_ADDIU a1,a1,4
+++#endif
+++
+++/* Copy the last 8 (or 16) bytes */
+++L(lastb):
+++	blez	a2,L(leave)
+++	PTR_ADDU a3,a0,a2	/* a3 is the last dst address */
+++L(lastbloop):
+++	lb	v1,0(a1)
+++	PTR_ADDIU a0,a0,1
+++	PTR_ADDIU a1,a1,1
+++	bne	a0,a3,L(lastbloop)
+++	sb	v1,-1(a0)
+++L(leave):
+++	j	ra
+++	nop
+++
+++/* We jump here with a memcpy of less than 8 or 16 bytes, depending on
+++   whether or not USE_DOUBLE is defined.  Instead of just doing byte
+++   copies, check the alignment and size and use lw/sw if possible.
+++   Otherwise, do byte copies.  */
+++
+++L(lasts):
+++	andi	t8,a2,3
+++	beq	t8,a2,L(lastb)
+++
+++	andi	t9,a0,3
+++	bne	t9,zero,L(lastb)
+++	andi	t9,a1,3
+++	bne	t9,zero,L(lastb)
+++
+++	PTR_SUBU a3,a2,t8
+++	PTR_ADDU a3,a0,a3
+++
+++L(wcopy_loop):
+++	lw	REG3,0(a1)
+++	PTR_ADDIU a0,a0,4
+++	PTR_ADDIU a1,a1,4
+++	bne	a0,a3,L(wcopy_loop)
+++	sw	REG3,-4(a0)
+++
+++	b	L(lastb)
+++	move	a2,t8
+++
+++#ifndef R6_CODE
+++/*
+++ * UNALIGNED case, got here with a3 = "negu a0"
+++ * This code is nearly identical to the aligned code above
+++ * but only the destination (not the source) gets aligned
+++ * so we need to do partial loads of the source followed
+++ * by normal stores to the destination (once we have aligned
+++ * the destination).
+++ */
+++
+++L(unaligned):
+++	andi	a3,a3,(NSIZE-1)	/* copy a3 bytes to align a0/a1 */
+++	beqz	a3,L(ua_chk16w) /* if a3=0, it is already aligned */
+++	PTR_SUBU a2,a2,a3	/* a2 is the remining bytes count */
+++
+++	C_LDHI	v1,UNIT(0)(a1)
+++	C_LDLO	v1,UNITM1(1)(a1)
+++	PTR_ADDU a1,a1,a3
+++	C_STHI	v1,UNIT(0)(a0)
+++	PTR_ADDU a0,a0,a3
+++
+++/*
+++ *  Now the destination (but not the source) is aligned
+++ * Set a2 to count how many bytes we have to copy after all the 64/128 byte
+++ * chunks are copied and a3 to the dst pointer after all the 64/128 byte
+++ * chunks have been copied.  We will loop, incrementing a0 and a1 until a0
+++ * equals a3.
+++ */
+++
+++L(ua_chk16w):
+++	andi	t8,a2,NSIZEDMASK /* any whole 64-byte/128-byte chunks? */
+++	beq	a2,t8,L(ua_chkw) /* if a2==t8, no 64-byte/128-byte chunks */
+++	PTR_SUBU a3,a2,t8	 /* subtract from a2 the reminder */
+++	PTR_ADDU a3,a0,a3	 /* Now a3 is the final dst after loop */
+++
+++# if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	PTR_ADDU t0,a0,a2	  /* t0 is the "past the end" address */
+++	PTR_SUBU t9,t0,PREFETCH_LIMIT /* t9 is the "last safe pref" address */
+++# endif
+++	PREFETCH_FOR_LOAD  (0, a1)
+++	PREFETCH_FOR_LOAD  (1, a1)
+++	PREFETCH_FOR_LOAD  (2, a1)
+++# if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT != PREFETCH_HINT_PREPAREFORSTORE)
+++	PREFETCH_FOR_STORE (1, a0)
+++	PREFETCH_FOR_STORE (2, a0)
+++	PREFETCH_FOR_STORE (3, a0)
+++# endif
+++# if defined(RETURN_FIRST_PREFETCH) && defined(USE_PREFETCH)
+++#  if (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	sltu    v1,t9,a0
+++	bgtz    v1,L(ua_skip_set)
+++	nop
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*4)
+++L(ua_skip_set):
+++#  else
+++	PTR_ADDIU v0,a0,(PREFETCH_CHUNK*1)
+++#  endif
+++# endif
+++L(ua_loop16w):
+++	PREFETCH_FOR_LOAD  (3, a1)
+++	C_LDHI	t0,UNIT(0)(a1)
+++	C_LDHI	t1,UNIT(1)(a1)
+++	C_LDHI	REG2,UNIT(2)(a1)
+++# if defined(USE_PREFETCH) && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	sltu	v1,t9,a0
+++	bgtz	v1,L(ua_skip_pref)
+++# endif
+++	C_LDHI	REG3,UNIT(3)(a1)
+++	PREFETCH_FOR_STORE (4, a0)
+++	PREFETCH_FOR_STORE (5, a0)
+++L(ua_skip_pref):
+++	C_LDHI	REG4,UNIT(4)(a1)
+++	C_LDHI	REG5,UNIT(5)(a1)
+++	C_LDHI	REG6,UNIT(6)(a1)
+++	C_LDHI	REG7,UNIT(7)(a1)
+++	C_LDLO	t0,UNITM1(1)(a1)
+++	C_LDLO	t1,UNITM1(2)(a1)
+++	C_LDLO	REG2,UNITM1(3)(a1)
+++	C_LDLO	REG3,UNITM1(4)(a1)
+++	C_LDLO	REG4,UNITM1(5)(a1)
+++	C_LDLO	REG5,UNITM1(6)(a1)
+++	C_LDLO	REG6,UNITM1(7)(a1)
+++	C_LDLO	REG7,UNITM1(8)(a1)
+++        PREFETCH_FOR_LOAD (4, a1)
+++	C_ST	t0,UNIT(0)(a0)
+++	C_ST	t1,UNIT(1)(a0)
+++	C_ST	REG2,UNIT(2)(a0)
+++	C_ST	REG3,UNIT(3)(a0)
+++	C_ST	REG4,UNIT(4)(a0)
+++	C_ST	REG5,UNIT(5)(a0)
+++	C_ST	REG6,UNIT(6)(a0)
+++	C_ST	REG7,UNIT(7)(a0)
+++	C_LDHI	t0,UNIT(8)(a1)
+++	C_LDHI	t1,UNIT(9)(a1)
+++	C_LDHI	REG2,UNIT(10)(a1)
+++	C_LDHI	REG3,UNIT(11)(a1)
+++	C_LDHI	REG4,UNIT(12)(a1)
+++	C_LDHI	REG5,UNIT(13)(a1)
+++	C_LDHI	REG6,UNIT(14)(a1)
+++	C_LDHI	REG7,UNIT(15)(a1)
+++	C_LDLO	t0,UNITM1(9)(a1)
+++	C_LDLO	t1,UNITM1(10)(a1)
+++	C_LDLO	REG2,UNITM1(11)(a1)
+++	C_LDLO	REG3,UNITM1(12)(a1)
+++	C_LDLO	REG4,UNITM1(13)(a1)
+++	C_LDLO	REG5,UNITM1(14)(a1)
+++	C_LDLO	REG6,UNITM1(15)(a1)
+++	C_LDLO	REG7,UNITM1(16)(a1)
+++        PREFETCH_FOR_LOAD (5, a1)
+++	C_ST	t0,UNIT(8)(a0)
+++	C_ST	t1,UNIT(9)(a0)
+++	C_ST	REG2,UNIT(10)(a0)
+++	C_ST	REG3,UNIT(11)(a0)
+++	C_ST	REG4,UNIT(12)(a0)
+++	C_ST	REG5,UNIT(13)(a0)
+++	C_ST	REG6,UNIT(14)(a0)
+++	C_ST	REG7,UNIT(15)(a0)
+++	PTR_ADDIU a0,a0,UNIT(16)	/* adding 64/128 to dest */
+++	bne	a0,a3,L(ua_loop16w)
+++	PTR_ADDIU a1,a1,UNIT(16)	/* adding 64/128 to src */
+++	move	a2,t8
+++
+++/* Here we have src and dest word-aligned but less than 64-bytes or
+++ * 128 bytes to go.  Check for a 32(64) byte chunk and copy if if there
+++ * is one.  Otherwise jump down to L(ua_chk1w) to handle the tail end of
+++ * the copy.  */
+++
+++L(ua_chkw):
+++	PREFETCH_FOR_LOAD (0, a1)
+++	andi	t8,a2,NSIZEMASK	  /* Is there a 32-byte/64-byte chunk.  */
+++				  /* t8 is the reminder count past 32-bytes */
+++	beq	a2,t8,L(ua_chk1w) /* When a2=t8, no 32-byte chunk */
+++	nop
+++	C_LDHI	t0,UNIT(0)(a1)
+++	C_LDHI	t1,UNIT(1)(a1)
+++	C_LDHI	REG2,UNIT(2)(a1)
+++	C_LDHI	REG3,UNIT(3)(a1)
+++	C_LDHI	REG4,UNIT(4)(a1)
+++	C_LDHI	REG5,UNIT(5)(a1)
+++	C_LDHI	REG6,UNIT(6)(a1)
+++	C_LDHI	REG7,UNIT(7)(a1)
+++	C_LDLO	t0,UNITM1(1)(a1)
+++	C_LDLO	t1,UNITM1(2)(a1)
+++	C_LDLO	REG2,UNITM1(3)(a1)
+++	C_LDLO	REG3,UNITM1(4)(a1)
+++	C_LDLO	REG4,UNITM1(5)(a1)
+++	C_LDLO	REG5,UNITM1(6)(a1)
+++	C_LDLO	REG6,UNITM1(7)(a1)
+++	C_LDLO	REG7,UNITM1(8)(a1)
+++	PTR_ADDIU a1,a1,UNIT(8)
+++	C_ST	t0,UNIT(0)(a0)
+++	C_ST	t1,UNIT(1)(a0)
+++	C_ST	REG2,UNIT(2)(a0)
+++	C_ST	REG3,UNIT(3)(a0)
+++	C_ST	REG4,UNIT(4)(a0)
+++	C_ST	REG5,UNIT(5)(a0)
+++	C_ST	REG6,UNIT(6)(a0)
+++	C_ST	REG7,UNIT(7)(a0)
+++	PTR_ADDIU a0,a0,UNIT(8)
+++/*
+++ * Here we have less than 32(64) bytes to copy.  Set up for a loop to
+++ * copy one word (or double word) at a time.
+++ */
+++L(ua_chk1w):
+++	andi	a2,t8,(NSIZE-1)	/* a2 is the reminder past one (d)word chunks */
+++	beq	a2,t8,L(ua_smallCopy)
+++	PTR_SUBU a3,t8,a2	/* a3 is count of bytes in one (d)word chunks */
+++	PTR_ADDU a3,a0,a3	/* a3 is the dst address after loop */
+++
+++/* copying in words (4-byte or 8-byte chunks) */
+++L(ua_wordCopy_loop):
+++	C_LDHI	v1,UNIT(0)(a1)
+++	C_LDLO	v1,UNITM1(1)(a1)
+++	PTR_ADDIU a0,a0,UNIT(1)
+++	PTR_ADDIU a1,a1,UNIT(1)
+++	bne	a0,a3,L(ua_wordCopy_loop)
+++	C_ST	v1,UNIT(-1)(a0)
+++
+++/* Copy the last 8 (or 16) bytes */
+++L(ua_smallCopy):
+++	beqz	a2,L(leave)
+++	PTR_ADDU a3,a0,a2	/* a3 is the last dst address */
+++L(ua_smallCopy_loop):
+++	lb	v1,0(a1)
+++	PTR_ADDIU a0,a0,1
+++	PTR_ADDIU a1,a1,1
+++	bne	a0,a3,L(ua_smallCopy_loop)
+++	sb	v1,-1(a0)
+++
+++	j	ra
+++	nop
+++
+++#else /* R6_CODE */
+++
+++# ifdef __MIPSEB
+++#  define SWAP_REGS(X,Y) X, Y
+++#  define ALIGN_OFFSET(N) (N)
+++# else
+++#  define SWAP_REGS(X,Y) Y, X
+++#  define ALIGN_OFFSET(N) (NSIZE-N)
+++# endif
+++# define R6_UNALIGNED_WORD_COPY(BYTEOFFSET) \
+++	andi	REG7, a2, (NSIZE-1);/* REG7 is # of bytes to by bytes.     */ \
+++	beq	REG7, a2, L(lastb); /* Check for bytes to copy by word	   */ \
+++	PTR_SUBU a3, a2, REG7;	/* a3 is number of bytes to be copied in   */ \
+++				/* (d)word chunks.			   */ \
+++	move	a2, REG7;	/* a2 is # of bytes to copy byte by byte   */ \
+++				/* after word loop is finished.		   */ \
+++	PTR_ADDU REG6, a0, a3;	/* REG6 is the dst address after loop.	   */ \
+++	PTR_SUBU REG2, a1, t8;	/* REG2 is the aligned src address.	   */ \
+++	PTR_ADDU a1, a1, a3;	/* a1 is addr of source after word loop.   */ \
+++	C_LD	t0, UNIT(0)(REG2);  /* Load first part of source.	   */ \
+++L(r6_ua_wordcopy##BYTEOFFSET):						      \
+++	C_LD	t1, UNIT(1)(REG2);  /* Load second part of source.	   */ \
+++	C_ALIGN	REG3, SWAP_REGS(t1,t0), ALIGN_OFFSET(BYTEOFFSET);	      \
+++	PTR_ADDIU a0, a0, UNIT(1);  /* Increment destination pointer.	   */ \
+++	PTR_ADDIU REG2, REG2, UNIT(1); /* Increment aligned source pointer.*/ \
+++	move	t0, t1;		/* Move second part of source to first.	   */ \
+++	bne	a0, REG6,L(r6_ua_wordcopy##BYTEOFFSET);			      \
+++	C_ST	REG3, UNIT(-1)(a0);					      \
+++	j	L(lastb);						      \
+++	nop
+++
+++	/* We are generating R6 code, the destination is 4 byte aligned and
+++	   the source is not 4 byte aligned. t8 is 1, 2, or 3 depending on the
+++           alignment of the source.  */
+++
+++L(r6_unaligned1):
+++	R6_UNALIGNED_WORD_COPY(1)
+++L(r6_unaligned2):
+++	R6_UNALIGNED_WORD_COPY(2)
+++L(r6_unaligned3):
+++	R6_UNALIGNED_WORD_COPY(3)
+++# ifdef USE_DOUBLE
+++L(r6_unaligned4):
+++	R6_UNALIGNED_WORD_COPY(4)
+++L(r6_unaligned5):
+++	R6_UNALIGNED_WORD_COPY(5)
+++L(r6_unaligned6):
+++	R6_UNALIGNED_WORD_COPY(6)
+++L(r6_unaligned7):
+++	R6_UNALIGNED_WORD_COPY(7)
+++# endif
+++#endif /* R6_CODE */
+++
+++	.set	at
+++	.set	reorder
+++END(MEMCPY_NAME)
+++#ifndef ANDROID_CHANGES
+++# ifdef _LIBC
+++#  ifdef __UCLIBC__
+++libc_hidden_def(MEMCPY_NAME)
+++#  else
+++libc_hidden_builtin_def (MEMCPY_NAME)
+++#  endif
+++# endif
+++#endif
++--- /dev/null	2017-07-21 19:16:52.719374444 +0800
+++++ b/src/string/mips/memset.S	2017-07-21 22:03:24.258007485 +0800
++@@ -0,0 +1,433 @@
+++/* Copyright (C) 2013-2015 Free Software Foundation, Inc.
+++   This file is part of the GNU C Library.
+++
+++   The GNU C Library is free software; you can redistribute it and/or
+++   modify it under the terms of the GNU Lesser General Public
+++   License as published by the Free Software Foundation; either
+++   version 2.1 of the License, or (at your option) any later version.
+++
+++   The GNU C Library is distributed in the hope that it will be useful,
+++   but WITHOUT ANY WARRANTY; without even the implied warranty of
+++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+++   Lesser General Public License for more details.
+++
+++   You should have received a copy of the GNU Lesser General Public
+++   License along with the GNU C Library.  If not, see
+++   <http://www.gnu.org/licenses/>.  */
+++
+++#ifdef ANDROID_CHANGES
+++# include "machine/asm.h"
+++# include "machine/regdef.h"
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#elif _LIBC
+++# include <sysdep.h>
+++# include <sys/regdef.h>
+++# include <sys/asm.h>
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#elif defined _COMPILING_NEWLIB
+++# include "machine/asm.h"
+++# include "machine/regdef.h"
+++# define PREFETCH_STORE_HINT PREFETCH_HINT_PREPAREFORSTORE
+++#else
+++#  define USE_PREFETCH
+++# include <sys/fpregdef.h>
+++# include <sys/regdef.h>
+++# include <sys/asm.h>
+++#endif
+++
+++/* Check to see if the MIPS architecture we are compiling for supports
+++   prefetching.  */
+++
+++#if (__mips == 4) || (__mips == 5) || (__mips == 32) || (__mips == 64)
+++# ifdef __UCLIBC_USE_MIPS_PREFETCH__
+++#  define USE_PREFETCH
+++# endif
+++#endif
+++
+++#if defined(_MIPS_SIM) && ((_MIPS_SIM == _ABI64) || (_MIPS_SIM == _ABIN32))
+++# ifndef DISABLE_DOUBLE
+++#  define USE_DOUBLE
+++# endif
+++#endif
+++
+++#ifndef USE_DOUBLE
+++# ifndef DISABLE_DOUBLE_ALIGN
+++#  define DOUBLE_ALIGN
+++# endif
+++#endif
+++
+++
+++/* Some asm.h files do not have the L macro definition.  */
+++#ifndef L
+++# if _MIPS_SIM == _ABIO32
+++#  define L(label) $L ## label
+++# else
+++#  define L(label) .L ## label
+++# endif
+++#endif
+++
+++/* Some asm.h files do not have the PTR_ADDIU macro definition.  */
+++#ifndef PTR_ADDIU
+++# ifdef USE_DOUBLE
+++#  define PTR_ADDIU	daddiu
+++# else
+++#  define PTR_ADDIU	addiu
+++# endif
+++#endif
+++
+++/* New R6 instructions that may not be in asm.h.  */
+++#ifndef PTR_LSA
+++# if _MIPS_SIM == _ABI64
+++#  define PTR_LSA        dlsa
+++# else
+++#  define PTR_LSA        lsa
+++# endif
+++#endif
+++
+++/* Using PREFETCH_HINT_PREPAREFORSTORE instead of PREFETCH_STORE
+++   or PREFETCH_STORE_STREAMED offers a large performance advantage
+++   but PREPAREFORSTORE has some special restrictions to consider.
+++
+++   Prefetch with the 'prepare for store' hint does not copy a memory
+++   location into the cache, it just allocates a cache line and zeros
+++   it out.  This means that if you do not write to the entire cache
+++   line before writing it out to memory some data will get zero'ed out
+++   when the cache line is written back to memory and data will be lost.
+++
+++   There are ifdef'ed sections of this memcpy to make sure that it does not
+++   do prefetches on cache lines that are not going to be completely written.
+++   This code is only needed and only used when PREFETCH_STORE_HINT is set to
+++   PREFETCH_HINT_PREPAREFORSTORE.  This code assumes that cache lines are
+++   less than MAX_PREFETCH_SIZE bytes and if the cache line is larger it will
+++   not work correctly.  */
+++
+++#ifdef USE_PREFETCH
+++# define PREFETCH_HINT_STORE		1
+++# define PREFETCH_HINT_STORE_STREAMED	5
+++# define PREFETCH_HINT_STORE_RETAINED	7
+++# define PREFETCH_HINT_PREPAREFORSTORE	30
+++
+++/* If we have not picked out what hints to use at this point use the
+++   standard load and store prefetch hints.  */
+++# ifndef PREFETCH_STORE_HINT
+++#  define PREFETCH_STORE_HINT PREFETCH_HINT_STORE
+++# endif
+++
+++/* We double everything when USE_DOUBLE is true so we do 2 prefetches to
+++   get 64 bytes in that case.  The assumption is that each individual
+++   prefetch brings in 32 bytes.  */
+++# ifdef USE_DOUBLE
+++#  define PREFETCH_CHUNK 64
+++#  define PREFETCH_FOR_STORE(chunk, reg) \
+++    pref PREFETCH_STORE_HINT, (chunk)*64(reg); \
+++    pref PREFETCH_STORE_HINT, ((chunk)*64)+32(reg)
+++# else
+++#  define PREFETCH_CHUNK 32
+++#  define PREFETCH_FOR_STORE(chunk, reg) \
+++    pref PREFETCH_STORE_HINT, (chunk)*32(reg)
+++# endif
+++
+++/* MAX_PREFETCH_SIZE is the maximum size of a prefetch, it must not be less
+++   than PREFETCH_CHUNK, the assumed size of each prefetch.  If the real size
+++   of a prefetch is greater than MAX_PREFETCH_SIZE and the PREPAREFORSTORE
+++   hint is used, the code will not work correctly.  If PREPAREFORSTORE is not
+++   used than MAX_PREFETCH_SIZE does not matter.  */
+++# define MAX_PREFETCH_SIZE 128
+++/* PREFETCH_LIMIT is set based on the fact that we never use an offset greater
+++   than 5 on a STORE prefetch and that a single prefetch can never be larger
+++   than MAX_PREFETCH_SIZE.  We add the extra 32 when USE_DOUBLE is set because
+++   we actually do two prefetches in that case, one 32 bytes after the other.  */
+++# ifdef USE_DOUBLE
+++#  define PREFETCH_LIMIT (5 * PREFETCH_CHUNK) + 32 + MAX_PREFETCH_SIZE
+++# else
+++#  define PREFETCH_LIMIT (5 * PREFETCH_CHUNK) + MAX_PREFETCH_SIZE
+++# endif
+++
+++# if (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE) \
+++    && ((PREFETCH_CHUNK * 4) < MAX_PREFETCH_SIZE)
+++/* We cannot handle this because the initial prefetches may fetch bytes that
+++   are before the buffer being copied.  We start copies with an offset
+++   of 4 so avoid this situation when using PREPAREFORSTORE.  */
+++#  error "PREFETCH_CHUNK is too large and/or MAX_PREFETCH_SIZE is too small."
+++# endif
+++#else /* USE_PREFETCH not defined */
+++# define PREFETCH_FOR_STORE(offset, reg)
+++#endif
+++
+++#if __mips_isa_rev > 5
+++# if (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++#  undef PREFETCH_STORE_HINT
+++#  define PREFETCH_STORE_HINT PREFETCH_HINT_STORE_STREAMED
+++# endif
+++# define R6_CODE
+++#endif
+++
+++/* Allow the routine to be named something else if desired.  */
+++#ifndef MEMSET_NAME
+++# define MEMSET_NAME memset
+++#endif
+++
+++/* We load/store 64 bits at a time when USE_DOUBLE is true.
+++   The C_ prefix stands for CHUNK and is used to avoid macro name
+++   conflicts with system header files.  */
+++
+++#ifdef USE_DOUBLE
+++# define C_ST	sd
+++# ifdef __MIPSEB
+++#  define C_STHI	sdl	/* high part is left in big-endian	*/
+++# else
+++#  define C_STHI	sdr	/* high part is right in little-endian	*/
+++# endif
+++#else
+++# define C_ST	sw
+++# ifdef __MIPSEB
+++#  define C_STHI	swl	/* high part is left in big-endian	*/
+++# else
+++#  define C_STHI	swr	/* high part is right in little-endian	*/
+++# endif
+++#endif
+++
+++/* Bookkeeping values for 32 vs. 64 bit mode.  */
+++#ifdef USE_DOUBLE
+++# define NSIZE 8
+++# define NSIZEMASK 0x3f
+++# define NSIZEDMASK 0x7f
+++#else
+++# define NSIZE 4
+++# define NSIZEMASK 0x1f
+++# define NSIZEDMASK 0x3f
+++#endif
+++#define UNIT(unit) ((unit)*NSIZE)
+++#define UNITM1(unit) (((unit)*NSIZE)-1)
+++
+++#ifdef ANDROID_CHANGES
+++LEAF(MEMSET_NAME,0)
+++#else
+++LEAF(MEMSET_NAME)
+++#endif
+++
+++	.set	nomips16
+++	.set	noreorder
+++/* If the size is less than 2*NSIZE (8 or 16), go to L(lastb).  Regardless of
+++   size, copy dst pointer to v0 for the return value.  */
+++	slti	t2,a2,(2 * NSIZE)
+++	bne	t2,zero,L(lastb)
+++	move	v0,a0
+++
+++/* If memset value is not zero, we copy it to all the bytes in a 32 or 64
+++   bit word.  */
+++	beq	a1,zero,L(set0)		/* If memset value is zero no smear  */
+++	PTR_SUBU a3,zero,a0
+++	nop
+++
+++	/* smear byte into 32 or 64 bit word */
+++#if ((__mips == 64) || (__mips == 32)) && (__mips_isa_rev >= 2)
+++# ifdef USE_DOUBLE
+++	dins	a1, a1, 8, 8        /* Replicate fill byte into half-word.  */
+++	dins	a1, a1, 16, 16      /* Replicate fill byte into word.       */
+++	dins	a1, a1, 32, 32      /* Replicate fill byte into dbl word.   */
+++# else
+++	ins	a1, a1, 8, 8        /* Replicate fill byte into half-word.  */
+++	ins	a1, a1, 16, 16      /* Replicate fill byte into word.       */
+++# endif
+++#else
+++# ifdef USE_DOUBLE
+++        and     a1,0xff
+++	dsll	t2,a1,8
+++	or	a1,t2
+++	dsll	t2,a1,16
+++	or	a1,t2
+++	dsll	t2,a1,32
+++	or	a1,t2
+++# else
+++        and     a1,0xff
+++	sll	t2,a1,8
+++	or	a1,t2
+++	sll	t2,a1,16
+++	or	a1,t2
+++# endif
+++#endif
+++
+++/* If the destination address is not aligned do a partial store to get it
+++   aligned.  If it is already aligned just jump to L(aligned).  */
+++L(set0):
+++#ifndef R6_CODE
+++	andi	t2,a3,(NSIZE-1)		/* word-unaligned address?          */
+++	beq	t2,zero,L(aligned)	/* t2 is the unalignment count      */
+++	PTR_SUBU a2,a2,t2
+++	C_STHI	a1,0(a0)
+++	PTR_ADDU a0,a0,t2
+++#else /* R6_CODE */
+++	andi	t2,a0,(NSIZE-1)
+++	lapc	t9,L(atable)
+++	PTR_LSA	t9,t2,t9,2
+++	jrc	t9
+++L(atable):
+++	bc	L(aligned)
+++# ifdef USE_DOUBLE
+++	bc	L(lb7)
+++	bc	L(lb6)
+++	bc	L(lb5)
+++	bc	L(lb4)
+++# endif
+++	bc	L(lb3)
+++	bc	L(lb2)
+++	bc	L(lb1)
+++L(lb7):
+++	sb	a1,6(a0)
+++L(lb6):
+++	sb	a1,5(a0)
+++L(lb5):
+++	sb	a1,4(a0)
+++L(lb4):
+++	sb	a1,3(a0)
+++L(lb3):
+++	sb	a1,2(a0)
+++L(lb2):
+++	sb	a1,1(a0)
+++L(lb1):
+++	sb	a1,0(a0)
+++
+++	li	t9,NSIZE
+++	subu	t2,t9,t2
+++	PTR_SUBU a2,a2,t2
+++	PTR_ADDU a0,a0,t2
+++#endif /* R6_CODE */
+++
+++L(aligned):
+++/* If USE_DOUBLE is not set we may still want to align the data on a 16
+++   byte boundry instead of an 8 byte boundry to maximize the opportunity
+++   of proAptiv chips to do memory bonding (combining two sequential 4
+++   byte stores into one 8 byte store).  We know there are at least 4 bytes
+++   left to store or we would have jumped to L(lastb) earlier in the code.  */
+++#ifdef DOUBLE_ALIGN
+++	andi	t2,a3,4
+++	beq	t2,zero,L(double_aligned)
+++	PTR_SUBU a2,a2,t2
+++	sw	a1,0(a0)
+++	PTR_ADDU a0,a0,t2
+++L(double_aligned):
+++#endif
+++
+++/* Now the destination is aligned to (word or double word) aligned address
+++   Set a2 to count how many bytes we have to copy after all the 64/128 byte
+++   chunks are copied and a3 to the dest pointer after all the 64/128 byte
+++   chunks have been copied.  We will loop, incrementing a0 until it equals
+++   a3.  */
+++	andi	t8,a2,NSIZEDMASK /* any whole 64-byte/128-byte chunks? */
+++	beq	a2,t8,L(chkw)	 /* if a2==t8, no 64-byte/128-byte chunks */
+++	PTR_SUBU a3,a2,t8	 /* subtract from a2 the reminder */
+++	PTR_ADDU a3,a0,a3	 /* Now a3 is the final dst after loop */
+++
+++/* When in the loop we may prefetch with the 'prepare to store' hint,
+++   in this case the a0+x should not be past the "t0-32" address.  This
+++   means: for x=128 the last "safe" a0 address is "t0-160".  Alternatively,
+++   for x=64 the last "safe" a0 address is "t0-96" In the current version we
+++   will use "prefetch hint,128(a0)", so "t0-160" is the limit.  */
+++#if defined(USE_PREFETCH) \
+++    && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	PTR_ADDU t0,a0,a2		/* t0 is the "past the end" address */
+++	PTR_SUBU t9,t0,PREFETCH_LIMIT	/* t9 is the "last safe pref" address */
+++#endif
+++#if defined(USE_PREFETCH) \
+++    && (PREFETCH_STORE_HINT != PREFETCH_HINT_PREPAREFORSTORE)
+++	PREFETCH_FOR_STORE (1, a0)
+++	PREFETCH_FOR_STORE (2, a0)
+++	PREFETCH_FOR_STORE (3, a0)
+++#endif
+++
+++L(loop16w):
+++#if defined(USE_PREFETCH) \
+++    && (PREFETCH_STORE_HINT == PREFETCH_HINT_PREPAREFORSTORE)
+++	sltu	v1,t9,a0		/* If a0 > t9 don't use next prefetch */
+++	bgtz	v1,L(skip_pref)
+++	nop
+++#endif
+++#ifdef R6_CODE
+++	PREFETCH_FOR_STORE (2, a0)
+++#else
+++	PREFETCH_FOR_STORE (4, a0)
+++	PREFETCH_FOR_STORE (5, a0)
+++#endif
+++L(skip_pref):
+++	C_ST	a1,UNIT(0)(a0)
+++	C_ST	a1,UNIT(1)(a0)
+++	C_ST	a1,UNIT(2)(a0)
+++	C_ST	a1,UNIT(3)(a0)
+++	C_ST	a1,UNIT(4)(a0)
+++	C_ST	a1,UNIT(5)(a0)
+++	C_ST	a1,UNIT(6)(a0)
+++	C_ST	a1,UNIT(7)(a0)
+++	C_ST	a1,UNIT(8)(a0)
+++	C_ST	a1,UNIT(9)(a0)
+++	C_ST	a1,UNIT(10)(a0)
+++	C_ST	a1,UNIT(11)(a0)
+++	C_ST	a1,UNIT(12)(a0)
+++	C_ST	a1,UNIT(13)(a0)
+++	C_ST	a1,UNIT(14)(a0)
+++	C_ST	a1,UNIT(15)(a0)
+++	PTR_ADDIU a0,a0,UNIT(16)	/* adding 64/128 to dest */
+++	bne	a0,a3,L(loop16w)
+++	nop
+++	move	a2,t8
+++
+++/* Here we have dest word-aligned but less than 64-bytes or 128 bytes to go.
+++   Check for a 32(64) byte chunk and copy if if there is one.  Otherwise
+++   jump down to L(chk1w) to handle the tail end of the copy.  */
+++L(chkw):
+++	andi	t8,a2,NSIZEMASK	/* is there a 32-byte/64-byte chunk.  */
+++				/* the t8 is the reminder count past 32-bytes */
+++	beq	a2,t8,L(chk1w)/* when a2==t8, no 32-byte chunk */
+++	nop
+++	C_ST	a1,UNIT(0)(a0)
+++	C_ST	a1,UNIT(1)(a0)
+++	C_ST	a1,UNIT(2)(a0)
+++	C_ST	a1,UNIT(3)(a0)
+++	C_ST	a1,UNIT(4)(a0)
+++	C_ST	a1,UNIT(5)(a0)
+++	C_ST	a1,UNIT(6)(a0)
+++	C_ST	a1,UNIT(7)(a0)
+++	PTR_ADDIU a0,a0,UNIT(8)
+++
+++/* Here we have less than 32(64) bytes to set.  Set up for a loop to
+++   copy one word (or double word) at a time.  Set a2 to count how many
+++   bytes we have to copy after all the word (or double word) chunks are
+++   copied and a3 to the dest pointer after all the (d)word chunks have
+++   been copied.  We will loop, incrementing a0 until a0 equals a3.  */
+++L(chk1w):
+++	andi	a2,t8,(NSIZE-1)	/* a2 is the reminder past one (d)word chunks */
+++	beq	a2,t8,L(lastb)
+++	PTR_SUBU a3,t8,a2	/* a3 is count of bytes in one (d)word chunks */
+++	PTR_ADDU a3,a0,a3	/* a3 is the dst address after loop */
+++
+++/* copying in words (4-byte or 8 byte chunks) */
+++L(wordCopy_loop):
+++	PTR_ADDIU a0,a0,UNIT(1)
+++	bne	a0,a3,L(wordCopy_loop)
+++	C_ST	a1,UNIT(-1)(a0)
+++
+++/* Copy the last 8 (or 16) bytes */
+++L(lastb):
+++	blez	a2,L(leave)
+++	PTR_ADDU a3,a0,a2       /* a3 is the last dst address */
+++L(lastbloop):
+++	PTR_ADDIU a0,a0,1
+++	bne	a0,a3,L(lastbloop)
+++	sb	a1,-1(a0)
+++L(leave):
+++	j	ra
+++	nop
+++
+++	.set	at
+++	.set	reorder
+++END(MEMSET_NAME)
+++#ifndef ANDROID_CHANGES
+++# ifdef _LIBC
+++#  ifdef __UCLIBC__
+++libc_hidden_def(MEMSET_NAME)
+++#  else
+++libc_hidden_builtin_def (MEMSET_NAME)
+++#  endif
+++# endif
+++#endif
+++

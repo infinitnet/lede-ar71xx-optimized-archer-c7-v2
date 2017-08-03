@@ -40,6 +40,9 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 200-30Mbps.
 
 ## Changelog
+- 2017-08-03
+  - Updated patches
+  - Upstream Updates
 - 2017-07-02
   - Re-added `ath9k-htc` and a couple of other recently "lost" kmods
   - Upstream updates
