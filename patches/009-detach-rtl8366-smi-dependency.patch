@@ -1,0 +1,12 @@
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+index 76ba6fa..694b23f 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+@@ -328,7 +328,6 @@ config ATH79_MACH_WZR_HP_G300NH
+ 	select ATH79_DEV_LEDS_GPIO
+ 	select ATH79_DEV_USB
+ 	select ATH79_DEV_WMAC
+-	select RTL8366_SMI
+ 
+ config ATH79_MACH_WZR_HP_G300NH2
+ 	bool "Buffalo WZR-HP-G300NH2 board support"

@@ -40,6 +40,10 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 200-30Mbps.
 
 ## Changelog
+- 2017-09-10
+  - GRO support added
+  - Patch updates
+  - Upstream updates
 - 2017-08-09
   - ssdk removed (useless for now)
   - Patch updates
