@@ -43,7 +43,6 @@ CONFIG_OPENVPN_openssl_ENABLE_PORT_SHARE=y
 CONFIG_OPENVPN_openssl_ENABLE_SERVER=y
 CONFIG_OPENVPN_openssl_ENABLE_SMALL=y
 CONFIG_OPENVPN_openssl_ENABLE_SOCKS=y
-CONFIG_PACKAGE_464xlat=y
 CONFIG_PACKAGE_6in4=y
 CONFIG_PACKAGE_6rd=y
 CONFIG_PACKAGE_6to4=y
@@ -102,7 +101,6 @@ CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
 CONFIG_PACKAGE_iptables-mod-ipopt=y
 # CONFIG_PACKAGE_iwl3945-firmware is not set
 # CONFIG_PACKAGE_iwl4965-firmware is not set
-# CONFIG_PACKAGE_iwlwifi-firmware is not set
 # CONFIG_PACKAGE_kmod-3c59x is not set
 # CONFIG_PACKAGE_kmod-6lowpan is not set
 # CONFIG_PACKAGE_kmod-8139cp is not set
@@ -130,7 +128,6 @@ CONFIG_PACKAGE_kmod-atm=y
 # CONFIG_PACKAGE_kmod-batman-adv is not set
 # CONFIG_PACKAGE_kmod-bcma is not set
 # CONFIG_PACKAGE_kmod-block2mtd is not set
-# CONFIG_PACKAGE_kmod-bluetooth is not set
 # CONFIG_PACKAGE_kmod-bluetooth_6lowpan is not set
 # CONFIG_PACKAGE_kmod-bmp085 is not set
 # CONFIG_PACKAGE_kmod-bmp085-i2c is not set
@@ -150,7 +147,6 @@ CONFIG_PACKAGE_kmod-crypto-aead=y
 CONFIG_PACKAGE_kmod-crypto-authenc=y
 CONFIG_PACKAGE_kmod-crypto-cbc=y
 CONFIG_PACKAGE_kmod-crypto-ccm=y
-# CONFIG_PACKAGE_kmod-crypto-cmac is not set
 CONFIG_PACKAGE_kmod-crypto-crc32=y
 CONFIG_PACKAGE_kmod-crypto-crc32c=y
 CONFIG_PACKAGE_kmod-crypto-ctr=y
@@ -203,7 +199,6 @@ CONFIG_PACKAGE_kmod-dnsresolver=y
 # CONFIG_PACKAGE_kmod-ethoc is not set
 # CONFIG_PACKAGE_kmod-fakelb is not set
 CONFIG_PACKAGE_kmod-fast-classifier=y
-# CONFIG_PACKAGE_kmod-fast-classifier-noload is not set
 # CONFIG_PACKAGE_kmod-firewire is not set
 # CONFIG_PACKAGE_kmod-forcedeth is not set
 CONFIG_PACKAGE_kmod-fs-autofs4=y
@@ -247,20 +242,14 @@ CONFIG_PACKAGE_kmod-gre6=y
 # CONFIG_PACKAGE_kmod-hermes-plx is not set
 # CONFIG_PACKAGE_kmod-hfcmulti is not set
 # CONFIG_PACKAGE_kmod-hfcpci is not set
-# CONFIG_PACKAGE_kmod-hid is not set
 # CONFIG_PACKAGE_kmod-hid-generic is not set
 # CONFIG_PACKAGE_kmod-hwmon-core is not set
-# CONFIG_PACKAGE_kmod-i2c-core is not set
 # CONFIG_PACKAGE_kmod-i2c-gpio-custom is not set
 # CONFIG_PACKAGE_kmod-ieee802154 is not set
 # CONFIG_PACKAGE_kmod-ieee802154_6lowpan is not set
 CONFIG_PACKAGE_kmod-ifb=y
 # CONFIG_PACKAGE_kmod-igb is not set
-# CONFIG_PACKAGE_kmod-iio-core is not set
 # CONFIG_PACKAGE_kmod-ikconfig is not set
-# CONFIG_PACKAGE_kmod-input-core is not set
-# CONFIG_PACKAGE_kmod-input-evdev is not set
-# CONFIG_PACKAGE_kmod-input-gpio-encoder is not set
 # CONFIG_PACKAGE_kmod-input-gpio-keys is not set
 # CONFIG_PACKAGE_kmod-input-gpio-keys-polled is not set
 # CONFIG_PACKAGE_kmod-input-joydev is not set
@@ -369,7 +358,6 @@ CONFIG_PACKAGE_kmod-loop=y
 # CONFIG_PACKAGE_kmod-md-mod is not set
 # CONFIG_PACKAGE_kmod-mii is not set
 # CONFIG_PACKAGE_kmod-misdn is not set
-# CONFIG_PACKAGE_kmod-mmc is not set
 # CONFIG_PACKAGE_kmod-mmc-spi is not set
 # CONFIG_PACKAGE_kmod-mpls is not set
 CONFIG_PACKAGE_kmod-mppe=y
@@ -443,8 +431,6 @@ CONFIG_PACKAGE_kmod-pptp=y
 # CONFIG_PACKAGE_kmod-r6040 is not set
 # CONFIG_PACKAGE_kmod-r8169 is not set
 # CONFIG_PACKAGE_kmod-random-core is not set
-# CONFIG_PACKAGE_kmod-regmap is not set
-# CONFIG_PACKAGE_kmod-rotary-gpio-custom is not set
 # CONFIG_PACKAGE_kmod-rt2400-pci is not set
 # CONFIG_PACKAGE_kmod-rt2500-pci is not set
 # CONFIG_PACKAGE_kmod-rt2500-usb is not set
@@ -484,7 +470,6 @@ CONFIG_PACKAGE_kmod-sit=y
 # CONFIG_PACKAGE_kmod-softdog is not set
 # CONFIG_PACKAGE_kmod-solos-pci is not set
 # CONFIG_PACKAGE_kmod-sound-core is not set
-# CONFIG_PACKAGE_kmod-spi-bitbang is not set
 # CONFIG_PACKAGE_kmod-spi-dev is not set
 # CONFIG_PACKAGE_kmod-spi-gpio is not set
 # CONFIG_PACKAGE_kmod-spi-gpio-custom is not set
@@ -565,6 +550,7 @@ CONFIG_PACKAGE_libcurl=y
 # CONFIG_PACKAGE_libertas-usb-firmware is not set
 # CONFIG_PACKAGE_libevdev is not set
 CONFIG_PACKAGE_libevent2=y
+# CONFIG_PACKAGE_libgomp is not set
 CONFIG_PACKAGE_libipset=y
 CONFIG_PACKAGE_libiwinfo-lua=y
 CONFIG_PACKAGE_libltdl=y
@@ -704,5 +690,4 @@ CONFIG_TARGET_OPTIMIZATION="-O3 -pipe -mno-branch-likely -mips32r2 -march=24kc -
 CONFIG_TARGET_OPTIONS=y
 CONFIG_WPA_RFKILL_SUPPORT=y
 CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK=y
-CONFIG_PACKAGE_mwifiex-sdio-firmware=m
 CONFIG_PACKAGE_rtl8821ae-firmware=m

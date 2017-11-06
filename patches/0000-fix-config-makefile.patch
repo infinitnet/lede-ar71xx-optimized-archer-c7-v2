@@ -1,0 +1,11 @@
+--- /dev/null	2017-11-05 09:30:41.941867500 +0100
++++ ./scripts/config/Makefile	2017-11-05 09:31:19.424187665 +0100
+@@ -29,7 +29,7 @@
+ 
+ conf: $(conf-objs)
+ mconf: $(mconf-objs) $(lxdialog-objs)
+-	$(CC) -o $@ $^ $(call check_lxdialog,ldflags $(CC))
++	$(CC) -o $@ $^ $(LIBS) -ltinfo $(call check_lxdialog,ldflags $(CC))
+ 
+ clean:
+ 	rm -f *.o lxdialog/*.o $(clean-files) conf mconf
