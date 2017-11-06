@@ -2,7 +2,7 @@ diff --git a/./target/linux/generic/patches-4.4/008-remove-kernel-debug.patch b/
 new file mode 100644
 index 0000000..a5b843a
 --- /dev/null
-+++ b/./target/linux/generic/patches-4.4/008-remove-kernel-debug.patch
++++ b/./target/linux/generic/patches-4.9/008-remove-kernel-debug.patch
 @@ -0,0 +1,10 @@
 +--- a/init/Kconfig	2017-01-31 03:02:50.000000000 +0800
 ++++ b/init/Kconfig	2017-01-31 08:20:27.460797686 +0800

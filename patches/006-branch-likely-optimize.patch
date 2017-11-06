@@ -1,19 +1,19 @@
-diff --git a/target/linux/ar71xx/patches-4.4/222-kernel-branch-likely-74kc.patch.patch b/target/linux/ar71xx/patches-4.4/222-kernel-branch-likely-74kc.patch.patch
+diff --git a/target/linux/ar71xx/patches-4.9/222-kernel-branch-likely-74kc.patch.patch b/target/linux/ar71xx/patches-4.9/222-kernel-branch-likely-74kc.patch.patch
 new file mode 100644
 index 0000000..02b4026
 --- /dev/null
-+++ b/target/linux/ar71xx/patches-4.4/222-kernel-branch-likely-74kc.patch.patch
++++ b/target/linux/ar71xx/patches-4.9/222-kernel-branch-likely-74kc.patch.patch
 @@ -0,0 +1,14 @@
 +--- a/arch/mips/Makefile
 ++++ b/arch/mips/Makefile
-+@@ -87,9 +87,9 @@ all-$(CONFIG_SYS_SUPPORTS_ZBOOT)+= vmlin
++@@ -90,9 +90,9 @@
 + # machines may also.  Since BFD is incredibly buggy with respect to
 + # crossformat linking we rely on the elf2ecoff tool for format conversion.
 + #
 +-cflags-y			+= -G 0 -mno-abicalls -fno-pic -pipe -mno-branch-likely
 ++cflags-y			+= -march=74kc -mno-dspr2 -mno-abicalls -fno-pic -pipe -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt
 + cflags-y			+= -msoft-float
-+-LDFLAGS_vmlinux			+= -G 0 -static -n -nostdlib --gc-sections
++-LDFLAGS_vmlinux			+= -G 0 -static -n -nostdlib
 ++LDFLAGS_vmlinux			+= -static -n -nostdlib --gc-sections
 + ifdef CONFIG_64BIT
 + KBUILD_AFLAGS_MODULE		+= -mlong-calls

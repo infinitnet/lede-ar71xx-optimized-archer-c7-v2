@@ -1,5 +1,5 @@
 --- /dev/null	2017-05-31 19:11:25.769633897 +0800
-+++ ./target/linux/generic/patches-4.4/999-disable-gro-gso-default.patch	2017-05-31 20:44:54.210769624 +0800
++++ ./target/linux/generic/patches-4.9/999-disable-gro-gso-default.patch	2017-05-31 20:44:54.210769624 +0800
 @@ -0,0 +1,13 @@
 +--- a/net/core/dev.c
 ++++ b/net/core/dev.c

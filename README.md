@@ -2,13 +2,13 @@
 
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
-- Baked using latest GCC version 6.3 with -O3, 24kc, binutils 2.28 and various patches to maximize performance
+- Baked using latest GCC version 7.2 with -O3, 24kc, binutils 2.29.1 and various patches to maximize performance
 - LuCI SSL Web Interface
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - DNSCrypt using Cisco OpenDNS for your security, privacy & freedom
 - QoS with SQM (cake & more)
 - Qualcomm FastPath
-- Hardware NAT ready
+- BBR Congestion Control
 - Simple Adblock available in LuCI
 - Dynamic DNS support
 - WiFi Schedule (disable/enable WiFi at specific times)
@@ -40,6 +40,13 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 200-30Mbps.
 
 ## Changelog
+- 2017-11-06 v2
+  - All patches ported to kernel 4.9
+  - Switched to kernel 4.9
+  - Enabled BBR & FQ (adjust your sysctl.conf)
+  - Switched to GCC 7.2
+  - Switched to binutils 2.29.1
+  - `.config` file added to repo
 - 2017-11-06
   - Switched from gwlim's to dissent1's Shortcut FE patches
   - Removed 464 to prevent bug (high CPU load, crash)

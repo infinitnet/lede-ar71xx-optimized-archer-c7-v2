@@ -2,7 +2,7 @@ diff --git a/target/linux/generic/patches-4.4/202-funit-at-a-time.patch b/target
 new file mode 100644
 index 0000000..0d0b14c
 --- /dev/null
-+++ b/./target/linux/generic/patches-4.4/202-funit-at-a-time.patch
++++ b/./target/linux/generic/patches-4.9/202-funit-at-a-time.patch
 @@ -0,0 +1,11 @@
 +--- a/Makefile
 ++++ b/Makefile
