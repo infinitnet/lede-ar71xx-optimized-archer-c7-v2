@@ -37,7 +37,7 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 
 **Can I get this firmware even faster?**
 
-Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 200-30Mbps.
+Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 20-30Mbps.
 
 ## Changelog
 - 2017-11-06 v2
