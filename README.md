@@ -40,6 +40,12 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 20-30Mbps.
 
 ## Changelog
+- 2017-12-08
+  - Fixed compilation issues (odhcpd-ipv6only was "magically" added by upstream updates and caused conflicts)
+  - Added rfkill support (might fix 5GHz issues, credits to @cliobrando)
+  - Added `kmod-usb-printer`
+  - Upstream updates
+
 - 2017-11-06 v2
   - All patches ported to kernel 4.9
   - Switched to kernel 4.9
