@@ -11,7 +11,7 @@ index 5f10bdb..15932cc 100644
  		  -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 \
 -		  -mno-abicalls -fno-pic -ffunction-sections -pipe -mlong-calls \
 +		  -mno-abicalls -fno-pic -ffunction-sections -pipe \
- 		  -fno-common -ffreestanding -fhonour-copts \
+ 		  -fno-common -ffreestanding -fhonour-copts -nostartfiles \
 -		  -mabi=32 -march=mips32r2 \
 -		  -Wa,-32 -Wa,-march=mips32r2 -Wa,-mips32r2 -Wa,--trap
 +		  -mabi=32 -march=74kc -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt \
