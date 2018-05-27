@@ -1,8 +1,6 @@
-diff --git a/target/linux/ar71xx/image/lzma-loader/src/Makefile b/target/linux/ar71xx/image/lzma-loader/src/Makefile
-index 5f10bdb..15932cc 100644
---- a/target/linux/ar71xx/image/lzma-loader/src/Makefile
-+++ b/target/linux/ar71xx/image/lzma-loader/src/Makefile
-@@ -30,12 +30,12 @@ OBJDUMP		:= $(CROSS_COMPILE)objdump
+--- a/target/linux/ar71xx/image/lzma-loader/src/Makefile	2018-05-27 08:27:03.475855265 +0200
++++ b/target/linux/ar71xx/image/lzma-loader/src/Makefile	2018-05-27 08:33:05.380144396 +0200
+@@ -30,12 +30,12 @@
  BIN_FLAGS	:= -O binary -R .reginfo -R .note -R .comment -R .mdebug \
  		   -R .MIPS.abiflags -S
  
@@ -10,12 +8,13 @@ index 5f10bdb..15932cc 100644
 +CFLAGS		= -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 \
  		  -fno-strict-aliasing -fno-common -fomit-frame-pointer -G 0 \
 -		  -mno-abicalls -fno-pic -ffunction-sections -pipe -mlong-calls \
-+		  -mno-abicalls -fno-pic -ffunction-sections -pipe \
- 		  -fno-common -ffreestanding -fhonour-copts \
+-		  -fno-common -ffreestanding -fhonour-copts -nostartfiles \
 -		  -mabi=32 -march=mips32r2 \
 -		  -Wa,-32 -Wa,-march=mips32r2 -Wa,-mips32r2 -Wa,--trap
++		  -mno-abicalls -fno-pic -ffunction-sections -pipe \
++		  -fno-common -ffreestanding -fhonour-copts \
 +		  -mabi=32 -march=74kc -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt \
 +		  -Wa,-32 -Wa,-march=74kc -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt -Wa,-march=74kc -mno-branch-likely -mno-mips16 -mno-interlink-compressed -msym32 -fno-caller-saves -fomit-frame-pointer -mframe-header-opt -Wa,--trap
  CFLAGS		+= -D_LZMA_PROB32
+ CFLAGS		+= -flto
  
- ASFLAGS		= $(CFLAGS) -D__ASSEMBLY__
