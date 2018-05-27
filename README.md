@@ -2,7 +2,7 @@
 
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
-- Baked using latest GCC version 7.2 with -O3, 24kc, binutils 2.29.1 and various patches to maximize performance
+- Baked using latest GCC version 7.2 with -O3, 24kc, binutils 2.30 and various patches to maximize performance
 - LuCI SSL Web Interface
 - VPN ready (OpenVPN, L2TP, IPSec, GRE, IPIP, PPTP)
 - DNSCrypt using Cisco OpenDNS for your security, privacy & freedom
