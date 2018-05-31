@@ -41,9 +41,8 @@ Yes. If you don't use PPPoE or another tunneling protocol, you can remove the li
 
 ## Changelog
 - 31-05-2018
-  - Fix `002-mips74kc-set-optimization.patch` to actually compile everything using 74kc (thanks @cliobrando)
   - Fix `061-remove-pppoa-luci.patch`
-  - Fix `063-add-luci-mips-processor-march.patch`
+  - Remove `063-add-luci-mips-processor-march.patch`
   - Upstream updates
 
 - 2018-05-27
