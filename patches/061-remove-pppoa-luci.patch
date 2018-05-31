@@ -4,8 +4,8 @@
  local netmod = luci.model.network
  
  local _, p
--for _, p in ipairs({"ppp", "pptp", "pppoe", "pppoa", "3g", "l2tp", "pppossh"}) do
-+for _, p in ipairs({"ppp", "pptp", "pppoe", "3g", "l2tp", "pppossh"}) do
+-for _, p in ipairs({"ppp", "pptp", "pppoe", "pppoa", "l2tp", "pppossh"}) do
++for _, p in ipairs({"ppp", "pptp", "pppoe", "l2tp", "pppossh"}) do
  
  	local proto = netmod:register_protocol(p)
  

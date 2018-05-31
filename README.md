@@ -40,6 +40,12 @@ Just reboot your router once and it should work. If it still doesn't work, make 
 Yes. If you don't use PPPoE or another tunneling protocol, you can remove the line `option mtu_fix 1` in `/etc/config/firewall` to squeeze out another 20-30Mbps.
 
 ## Changelog
+- 31-05-2018
+  - Fix `002-mips74kc-set-optimization.patch` to actually compile everything using 74kc (thanks @cliobrando)
+  - Fix `061-remove-pppoa-luci.patch`
+  - Fix `063-add-luci-mips-processor-march.patch`
+  - Upstream updates
+
 - 2018-05-27
   - Patches updated
   - Use wolfssl for hostapd

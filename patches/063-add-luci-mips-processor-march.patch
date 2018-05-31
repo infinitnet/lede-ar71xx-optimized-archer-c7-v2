@@ -10,12 +10,11 @@
  	local unameinfo = nixio.uname() or { }
  
  	local meminfo = sysinfo.memory or {
-@@ -682,6 +685,8 @@
- 	<table width="100%" cellspacing="10">
- 		<tr><td width="33%"><%:Hostname%></td><td><%=luci.sys.hostname() or "?"%></td></tr>
- 		<tr><td width="33%"><%:Model%></td><td><%=pcdata(boardinfo.model or boardinfo.system or "?")%></td></tr>
-+		<tr><td width="33%"><%:Processor%></td><td><%=pcdata(processor or "?")%></td></tr>
-+		<tr><td width="33%"><%:Architecture%></td><td><%=pcdata(march or "?")%></td></tr>
- 		<tr><td width="33%"><%:Firmware Version%></td><td>
+@@ -597,6 +600,7 @@
+ 	<div class="table" width="100%">
+ 		<div class="tr"><div class="td left" width="33%"><%:Hostname%></div><div class="td left"><%=luci.sys.hostname() or "?"%></div></div>
+ 		<div class="tr"><div class="td left" width="33%"><%:Model%></div><div class="td left"><%=pcdata(boardinfo.model or "?")%></div></div>
++                <div class="tr"><div class="td left" width="33%"><%:Processor%></div><div class="td left"><%=pcdata(processor or "?")%></div></div>
+ 		<div class="tr"><div class="td left" width="33%"><%:Architecture%></div><div class="td left"><%=pcdata(boardinfo.system or "?")%></div></div>
+ 		<div class="tr"><div class="td left" width="33%"><%:Firmware Version%></div><div class="td left">
  			<%=pcdata(ver.distname)%> <%=pcdata(ver.distversion)%> /
- 			<%=pcdata(ver.luciname)%> (<%=pcdata(ver.luciversion)%>)
