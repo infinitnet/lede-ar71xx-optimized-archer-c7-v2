@@ -1,5 +1,10 @@
 # TP-Link Archer C7 V2 AC1750 Optimized LEDE Firmware
 
+<p align="center">
+  <a href="https://buymeacoffee.com/infinitnet"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="40"></a>
+  <a href="https://ko-fi.com/infinitnet"><img src="https://storage.ko-fi.com/cdn/kofi3.png?v=6" alt="Support me on Ko-fi" height="40"></a>
+</p>
+
 ## Features
 - Extended & optimized build for [TP-Link Archer C7 V2](https://lede-project.org/toh/hwdata/tp-link/tp-link_archer_c7_ac1750_v2.0) only based on [latest LEDE trunk source](https://git.lede-project.org/?p=source.git)
 - Baked using latest GCC version 7.2 with -O3, 24kc, binutils 2.30 and various patches to maximize performance
